@@ -1,5 +1,5 @@
 [plugininstall]
 description=Markdown viewer based on HTMLView plugin source and Hoedown library.
 type=wlx
-file=MarkdownView.wlx64
+file=MarkdownView.wlx
 defaultdir=plugins\wlx\MarkdownView

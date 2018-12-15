@@ -10,7 +10,6 @@ copy Build\*.wlx? ReleaseWLX\
 copy Build\*.inf ReleaseWLX\
 copy Build\*.md ReleaseWLX\
 copy Build\css\*.* ReleaseWLX\css\
-copy Readme.md ReleaseWLX\
 
 del /Q markdownviewer.zip
 

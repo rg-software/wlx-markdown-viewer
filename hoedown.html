@@ -1,0 +1,200 @@
+<html lang="en">
+<head>
+<title>Hoedown</title>
+
+<h2 class="chapter">The <samp><span class="command">hoedown</span></samp> program</h2>
+
+<p><a name="index-g_t_0040command_007bhoedown_007d_002c-command-line-program-1"></a><a name="index-Command-line-program-_0040command_007bhoedown_007d-2"></a>
+
+   <p>The package compiles and installs the program <samp><span class="command">hoedown</span></samp>, which
+can process input Markdown documents and generate <acronym>HTML</acronym> output using
+the built&ndash;in <acronym>HTML</acronym> renderer.  Synopsis:
+
+<pre class="example">     hoedown [OPTION]... [FILE]
+</pre>
+   <p>Process the Markdown in &lsquo;<samp><span class="samp">FILE</span></samp>&rsquo; (or standard input) and render it to
+standard output, using the Hoedown library.  Parsing and rendering can
+be customized through the options below.  The default is to parse pure
+markdown and output <acronym>HTML</acronym>.
+
+   <p>Main options:
+
+     <dl>
+<dt><code>-n </code><var>N</var><dt><code>--max-nesting=</code><var>N</var><dd><a name="index-g_t_0040option_007b_002dn_007d_002c-command-line-option-3"></a><a name="index-Command-line-option-_0040option_007b_002dn_007d-4"></a><a name="index-g_t_0040option_007b_002d_002dmax_002dnesting_007d_002c-command-line-option-5"></a><a name="index-Command-line-option-_0040option_007b_002d_002dmax_002dnesting_007d-6"></a>Maximum level of block nesting parsed.  Default is 16.
+
+     <br><dt><code>-t</code><dt><code>--toc-level=</code><var>N</var><dd><a name="index-g_t_0040option_007b_002dt_007d_002c-command-line-option-7"></a><a name="index-Command-line-option-_0040option_007b_002dt_007d-8"></a><a name="index-g_t_0040option_007b_002d_002dtoc_002dlevel_007d_002c-command-line-option-9"></a><a name="index-Command-line-option-_0040option_007b_002d_002dtoc_002dlevel_007d-10"></a>Maximum level for headers included in the Table of Contents.  Zero
+disables the inclusion of Table of Contents in the output (the default).
+
+     <br><dt><code>--html</code><dd><a name="index-g_t_0040option_007b_002d_002dhtml_007d_002c-command-line-option-11"></a><a name="index-Command-line-option-_0040option_007b_002d_002dhtml_007d-12"></a>Render (X)HTML. The default.
+
+     <br><dt><code>--html-toc</code><dd><a name="index-g_t_0040option_007b_002d_002dhtml_002dtoc_007d_002c-command-line-option-13"></a><a name="index-Command-line-option-_0040option_007b_002d_002dhtml_002dtoc_007d-14"></a>Render the Table of Contents in <acronym>(X)HTML</acronym>.
+
+     <br><dt><code>-T</code><dt><code>--time</code><dd><a name="index-g_t_0040option_007b_002dT_007d_002c-command-line-option-15"></a><a name="index-Command-line-option-_0040option_007b_002dT_007d-16"></a><a name="index-g_t_0040option_007b_002d_002dtime_007d_002c-command-line-option-17"></a><a name="index-Command-line-option-_0040option_007b_002d_002dtime_007d-18"></a>Show time spent in rendering.
+
+     <br><dt><code>-i </code><var>N</var><dt><code>--input-unit=</code><var>N</var><dd><a name="index-g_t_0040option_007b_002di_007d_002c-command-line-option-19"></a><a name="index-Command-line-option-_0040option_007b_002di_007d-20"></a><a name="index-g_t_0040option_007b_002d_002dinput_002dunit_007d_002c-command-line-option-21"></a><a name="index-Command-line-option-_0040option_007b_002d_002dinput_002dunit_007d-22"></a>Reading block size.  Default is 1024.
+
+     <br><dt><code>-o </code><var>N</var><dt><code>--output-unit=</code><var>N</var><dd><a name="index-g_t_0040option_007b_002do_007d_002c-command-line-option-23"></a><a name="index-Command-line-option-_0040option_007b_002do_007d-24"></a><a name="index-g_t_0040option_007b_002d_002doutput_002dunit_007d_002c-command-line-option-25"></a><a name="index-Command-line-option-_0040option_007b_002d_002doutput_002dunit_007d-26"></a>Writing block size.  Default is 64.
+
+     <br><dt><code>-h</code><dt><code>--help</code><dd><a name="index-g_t_0040option_007b_002dh_007d_002c-command-line-option-27"></a><a name="index-Command-line-option-_0040option_007b_002dh_007d-28"></a><a name="index-g_t_0040option_007b_002d_002dhelp_007d_002c-command-line-option-29"></a><a name="index-Command-line-option-_0040option_007b_002d_002dhelp_007d-30"></a>Print this help text.
+
+     <br><dt><code>-v</code><dt><code>--version</code><dd><a name="index-g_t_0040option_007b_002dv_007d_002c-command-line-option-31"></a><a name="index-Command-line-option-_0040option_007b_002dv_007d-32"></a><a name="index-g_t_0040option_007b_002d_002dversion_007d_002c-command-line-option-33"></a><a name="index-Command-line-option-_0040option_007b_002d_002dversion_007d-34"></a>Print Hoedown version. 
+</dl>
+
+   <p>Block extensions:
+
+     <dl>
+<dt><samp><span class="option">--tables</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dtables_007d_002c-command-line-option-35"></a><a name="index-Command-line-option-_0040option_007b_002d_002dtables_007d-36"></a>Parse PHP-Markdown style tables.
+
+     <br><dt><samp><span class="option">--fenced-code</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dfenced_002dcode_007d_002c-command-line-option-37"></a><a name="index-Command-line-option-_0040option_007b_002d_002dfenced_002dcode_007d-38"></a>Parse fenced code blocks.
+
+     <br><dt><samp><span class="option">--footnotes</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dfootnotes_007d_002c-command-line-option-39"></a><a name="index-Command-line-option-_0040option_007b_002d_002dfootnotes_007d-40"></a>Parse footnotes.
+
+     <br><dt><samp><span class="option">--all-block</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dall_002dblock_007d_002c-command-line-option-41"></a><a name="index-Command-line-option-_0040option_007b_002d_002dall_002dblock_007d-42"></a>Enable all of the above. 
+</dl>
+
+   <p>Span extensions:
+
+     <dl>
+<dt><samp><span class="option">--autolink</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dautolink_007d_002c-command-line-option-43"></a><a name="index-Command-line-option-_0040option_007b_002d_002dautolink_007d-44"></a>Automatically turn safe <acronym>URL</acronym>s into links.
+
+     <br><dt><samp><span class="option">--strikethrough</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dstrikethrough_007d_002c-command-line-option-45"></a><a name="index-Command-line-option-_0040option_007b_002d_002dstrikethrough_007d-46"></a>Parse &lsquo;<samp><span class="samp">~~stikethrough~~</span></samp>&rsquo; spans.
+
+     <br><dt><samp><span class="option">--underline</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dunderline_007d_002c-command-line-option-47"></a><a name="index-Command-line-option-_0040option_007b_002d_002dunderline_007d-48"></a>Parse &lsquo;<samp><span class="samp">_underline_</span></samp>&rsquo; instead of emphasis.
+
+     <br><dt><samp><span class="option">--highlight</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dhighlight_007d_002c-command-line-option-49"></a><a name="index-Command-line-option-_0040option_007b_002d_002dhighlight_007d-50"></a>Parse &lsquo;<samp><span class="samp">==highlight==</span></samp>&rsquo; spans.
+
+     <br><dt><samp><span class="option">--quote</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dquote_007d_002c-command-line-option-51"></a><a name="index-Command-line-option-_0040option_007b_002d_002dquote_007d-52"></a>Render &ldquo;quotes&rdquo; as &lsquo;<samp><span class="samp">&lt;q&gt;quotes&lt;/q&gt;</span></samp>&rsquo;.
+
+     <br><dt><samp><span class="option">--superscript</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dsuperscript_007d_002c-command-line-option-53"></a><a name="index-Command-line-option-_0040option_007b_002d_002dsuperscript_007d-54"></a>Parse &lsquo;<samp><span class="samp">super^script</span></samp>&rsquo;.
+
+     <br><dt><samp><span class="option">--math</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dmath_007d_002c-command-line-option-55"></a><a name="index-Command-line-option-_0040option_007b_002d_002dmath_007d-56"></a>Parse TeX &lsquo;<samp><span class="samp">$$math$$</span></samp>&rsquo; syntax, Kramdown style.
+
+     <br><dt><samp><span class="option">--all-span</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dall_002dspan_007d_002c-command-line-option-57"></a><a name="index-Command-line-option-_0040option_007b_002d_002dall_002dspan_007d-58"></a>Enable all of the above. 
+</dl>
+
+   <p>Other flags:
+
+     <dl>
+<dt><samp><span class="option">--disable-intra-emphasis</span></samp><dd><a name="index-g_t_0040option_007b_002d_002ddisable_002dintra_002demphasis_007d_002c-command-line-option-59"></a><a name="index-Command-line-option-_0040option_007b_002d_002ddisable_002dintra_002demphasis_007d-60"></a>Disable &lsquo;<samp><span class="samp">emphasis_between_words</span></samp>&rsquo;.
+
+     <br><dt><samp><span class="option">--space-headers</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dspace_002dheaders_007d_002c-command-line-option-61"></a><a name="index-Command-line-option-_0040option_007b_002d_002dspace_002dheaders_007d-62"></a>Require a space after &lsquo;<samp><span class="samp">#</span></samp>&rsquo; in headers.
+
+     <br><dt><samp><span class="option">--math-explicit</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dmath_002dexplicit_007d_002c-command-line-option-63"></a><a name="index-Command-line-option-_0040option_007b_002d_002dmath_002dexplicit_007d-64"></a>Instead of guessing by context, parse &lsquo;<samp><span class="samp">$inline math$</span></samp>&rsquo; and &lsquo;<samp><span class="samp">$$always block
+math$$</span></samp>&rsquo; (requires <samp><span class="option">--math</span></samp>).
+
+     <br><dt><samp><span class="option">--all-flags</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dall_002dflags_007d_002c-command-line-option-65"></a><a name="index-Command-line-option-_0040option_007b_002d_002dall_002dflags_007d-66"></a>Enable all of the above. 
+</dl>
+
+   <p>Negative flags:
+
+     <dl>
+<dt><samp><span class="option">--disable-indented-code</span></samp><dd><a name="index-g_t_0040option_007b_002d_002ddisable_002dindented_002dcode_007d_002c-command-line-option-67"></a><a name="index-Command-line-option-_0040option_007b_002d_002ddisable_002dindented_002dcode_007d-68"></a>Don't parse indented code blocks.
+
+     <br><dt><samp><span class="option">--all-negative</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dall_002dnegative_007d_002c-command-line-option-69"></a><a name="index-Command-line-option-_0040option_007b_002d_002dall_002dnegative_007d-70"></a>Enable all of the above. 
+</dl>
+
+   <p>HTML-specific options:
+
+     <dl>
+<dt><samp><span class="option">--skip-html</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dskip_002dhtml_007d_002c-command-line-option-71"></a><a name="index-Command-line-option-_0040option_007b_002d_002dskip_002dhtml_007d-72"></a>Strip all <acronym>HTML</acronym> tags.
+
+     <br><dt><samp><span class="option">--escape</span></samp><dd><a name="index-g_t_0040option_007b_002d_002descape_007d_002c-command-line-option-73"></a><a name="index-Command-line-option-_0040option_007b_002d_002descape_007d-74"></a>Escape all <acronym>HTML</acronym>.
+
+     <br><dt><samp><span class="option">--hard-wrap</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dhard_002dwrap_007d_002c-command-line-option-75"></a><a name="index-Command-line-option-_0040option_007b_002d_002dhard_002dwrap_007d-76"></a>Render each linebreak as &lsquo;<samp><span class="samp">&lt;br&gt;</span></samp>&rsquo;.
+
+     <br><dt><samp><span class="option">--xhtml</span></samp><dd><a name="index-g_t_0040option_007b_002d_002dxhtml_007d_002c-command-line-option-77"></a><a name="index-Command-line-option-_0040option_007b_002d_002dxhtml_007d-78"></a>Render <acronym>XHTML</acronym>. 
+</dl>
+
+   <p>Flags and extensions can be negated by prepending &lsquo;<samp><span class="samp">no</span></samp>&rsquo; to them, as
+in <samp><span class="option">--no-tables</span></samp>, <samp><span class="option">--no-span</span></samp> or <samp><span class="option">--no-escape</span></samp>. 
+Options are processed in order, so in case of contradictory options the
+last specified stands.
+
+   <p>When &lsquo;<samp><span class="samp">FILE</span></samp>&rsquo; is &lsquo;<samp><span class="samp">-</span></samp>&rsquo;, read standard input.  If no &lsquo;<samp><span class="samp">FILE</span></samp>&rsquo;
+was given, read standard input.  Use <samp><span class="option">--</span></samp> to signal end of option
+parsing.  Exit status is: &lsquo;<samp><span class="samp">0</span></samp>&rsquo; if no errors occurred, &lsquo;<samp><span class="samp">1</span></samp>&rsquo; with
+option parsing errors, &lsquo;<samp><span class="samp">4</span></samp>&rsquo; with memory allocation errors or
+&lsquo;<samp><span class="samp">5</span></samp>&rsquo; with I/O errors.
+
+<!-- page -->
+<div class="node">
+<a name="smartypants"></a>
+</div>
+
+<h2 class="chapter">The <samp><span class="command">smartypants</span></samp> program</h2>
+
+<p><a name="index-g_t_0040command_007bsmartypants_007d_002c-command-line-program-79"></a><a name="index-Command-line-program-_0040command_007bsmartypants_007d-80"></a>
+
+   <p>The package compiles and installs the program <samp><span class="command">smartypants</span></samp>,
+which translates plain <acronym>ASCII</acronym> punctuation characters into &ldquo;smart&rdquo;
+typographic punctuation <acronym>HTML</acronym> entities.  <samp><span class="command">smartypants</span></samp>
+performs the following transformations:
+
+     <ul>
+<li>Straight quotes into &ldquo;curly&rdquo; quote <acronym>HTML</acronym> entities.  The input text:
+
+     <pre class="example">          &lt;p&gt;"Hello" 'World'!&lt;/p&gt;
+</pre>
+     <p class="noindent">is converted to:
+
+     <pre class="example">          &lt;p&gt;&amp;ldquo;Hello&amp;rdquo; &amp;lsquo;World&amp;rsquo;!&lt;/p&gt;
+</pre>
+     <li>Backticks&ndash;style quotes into curly quote <acronym>HTML</acronym> entities.  The input
+text:
+
+     <pre class="example">          &lt;p&gt;``Hello World!''&lt;/p&gt;
+</pre>
+     <p class="noindent">is converted to:
+
+     <pre class="example">          &lt;p&gt;&amp;ldquo;Hello World!&amp;rdquo;&lt;/p&gt;
+</pre>
+     <li>Dashes (&lsquo;<samp><span class="samp">--</span></samp>&rsquo; and &lsquo;<samp><span class="samp">---</span></samp>&rsquo;) into en- and em-dash entities.  The
+input text:
+
+     <pre class="example">          &lt;p&gt;Trouble--maker---that is what you are!&lt;/p&gt;
+</pre>
+     <p class="noindent">is converted to:
+
+     <pre class="example">          &lt;p&gt;Trouble&amp;ndash;maker&amp;mdash;that is what you are!&lt;/p&gt;
+</pre>
+     <li>Three consecutive dots (&lsquo;<samp><span class="samp">...</span></samp>&rsquo;) into an ellipsis entity. 
+</ul>
+
+   <p>Synopsis:
+
+<pre class="example">     smartypants [OPTION]... [FILE]
+</pre>
+   <p>Apply SmartyPants smart punctuation to the <acronym>HTML</acronym> in &lsquo;<samp><span class="samp">FILE</span></samp>&rsquo; (or
+standard input), and output the resulting <acronym>HTML</acronym> to standard output.
+
+   <p>Main options:
+
+     <dl>
+<dt><code>-T</code><dt><code>--time</code><dd>Show time spent in SmartyPants processing.
+
+     <br><dt><code>-i </code><var>N</var><dt><code>--input-unit=</code><var>N</var><dd>Reading block size.  Default is 1024.
+
+     <br><dt><code>-o </code><var>N</var><dt><code>--output-unit=</code><var>N</var><dd>Writing block size.  Default is 64.
+
+     <br><dt><code>-h</code><dt><code>--help</code><dd>Print this help text.
+
+     <br><dt><code>-v</code><dt><code>--version</code><dd>Print Hoedown version. 
+</dl>
+
+   <p>Options are processed in order, so in case of contradictory options the
+last specified stands.
+
+   <p>When &lsquo;<samp><span class="samp">FILE</span></samp>&rsquo; is &lsquo;<samp><span class="samp">-</span></samp>&rsquo;, read standard input.  If no &lsquo;<samp><span class="samp">FILE</span></samp>&rsquo;
+was given, read standard input.  Use &lsquo;<samp><span class="samp">--</span></samp>&rsquo; to signal end of option
+parsing.  Exit status is: &lsquo;<samp><span class="samp">0</span></samp>&rsquo; if no errors occurred, &lsquo;<samp><span class="samp">1</span></samp>&rsquo; with
+option parsing errors, &lsquo;<samp><span class="samp">4</span></samp>&rsquo; with memory allocation errors or
+&lsquo;<samp><span class="samp">5</span></samp>&rsquo; with I/O errors.
+
+<!-- page -->
+<div class="node">
+<a name="lib"></a>
+<p><hr>
+
+</div>
+</body></html>
+

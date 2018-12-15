@@ -1,6 +1,7 @@
 
 #include <ExDispID.h>
 #include <mshtmdid.h>
+#include <comutil.h>
 
 #include "browserhost.h"
 #include "functions.h"
@@ -907,6 +908,41 @@ DWORD WINAPI NewWindowThreadFunc(LPVOID param)
 	return 0;
 }
 
+void CBrowserHost::LoadWebBrowserFromStreamWrapper(const char* html)
+{
+
+	IDispatch* pHtmlDoc;
+	mWebBrowser->get_Document(&pHtmlDoc);
+	if (!pHtmlDoc)
+		return;
+	
+	CComPtr<IHTMLDocument2> doc2;
+	doc2.Attach((IHTMLDocument2*)pHtmlDoc);
+	if (!doc2)
+		return;
+	
+	// Creates a new one-dimensional array
+	SAFEARRAY* psaStrings = SafeArrayCreateVector(VT_VARIANT, 0, 1);
+	if (!psaStrings)
+		return;
+
+	_bstr_t bstrt(html);
+	VARIANT* param;
+	if (SUCCEEDED(SafeArrayAccessData(psaStrings, (LPVOID*)&param)))
+	{
+		param->vt = VT_BSTR;
+		param->bstrVal = bstrt.GetBSTR(); // bstr;
+		if (SUCCEEDED(SafeArrayUnaccessData(psaStrings)))
+		{
+			doc2->write(psaStrings);
+			doc2->close();
+		}
+	}
+
+	if (psaStrings)
+		SafeArrayDestroy(psaStrings);
+}
+
 HRESULT STDMETHODCALLTYPE CBrowserHost::Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
                                                     WORD wFlags, DISPPARAMS FAR* pDispParams,
                                                     VARIANT FAR* pVarResult,
@@ -920,6 +956,7 @@ HRESULT STDMETHODCALLTYPE CBrowserHost::Invoke(DISPID dispIdMember, REFIID riid,
 			if(options.highlight_all_matches)
 				ClearSearchHighlight();
 			mSearchTxtRange.Release();
+			break; 
 		case DISPID_DOCUMENTCOMPLETE:
 		case DISPID_NAVIGATECOMPLETE:
 		case DISPID_NAVIGATECOMPLETE2:

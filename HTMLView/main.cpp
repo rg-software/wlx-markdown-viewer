@@ -1,22 +1,40 @@
 #include <direct.h>
 #include <windows.h>
 #include <fstream>
+#include <sstream>
 #include "functions.h"
 #include "browserhost.h"
 #include "ListerPlugin.h"
 #include "resource.h"
+#include <ExDispID.h>
+#include "common.h"
+#include <locale>
+#include <codecvt>
+#include <algorithm>
 
 HHOOK hook_keyb = NULL;
 HIMAGELIST img_list = NULL;
 int num_lister_windows = 0;
 
+char* INPUT_STRING;
+char* SP_INPUT_STRING;
+char* OUTPUT_STRING;
+char* SP_OUTPUT_STRING;
+extern "C" int hoedown_main(int argc, const char **argv);
+extern "C" int smartypants_main(int argc, char **argv);
+extern "C" int smartypants_main_null(int argc, char **argv);
+
 char result_file_name_copy[MAX_PATH];
 
 CSmallStringList html_extensions;
+CSmallStringList markdown_extensions;
 CSmallStringList chm_extensions;
 CSmallStringList def_signatures;
 CSmallStringList trans_hotkeys;
 CSmallStringList typing_trans_hotkeys;
+char hoedown_args[512];
+char smartypants_args[512];
+char html_template[512];
 
 LRESULT CALLBACK HookKeybProc(int nCode,WPARAM wParam,LPARAM lParam)
 {
@@ -50,6 +68,9 @@ void InitProc()
 		else
 			img_list = ImageList_LoadImage(hinst, MAKEINTRESOURCE(IDB_BITMAP1), 24, 0, CLR_DEFAULT, IMAGE_BITMAP, LR_CREATEDIBSECTION);
 	}
+	
+	if(!markdown_extensions.valid())
+		markdown_extensions.load_from_ini(options.IniFileName, "Extensions", "MarkdownExtensions");
 	if(!html_extensions.valid())
 		html_extensions.load_from_ini(options.IniFileName, "Extensions", "HTMLExtensions");
 	if(!chm_extensions.valid())
@@ -60,6 +81,10 @@ void InitProc()
 		typing_trans_hotkeys.load_from_ini(options.IniFileName, "Hotkeys", "TypingTranslationHotkeys");
 	if(!trans_hotkeys.valid())
 		trans_hotkeys.load_from_ini(options.IniFileName, "Hotkeys", "TranslationHotkeys");
+	
+	GetPrivateProfileString("Renderer", "HoedownArgs", "", &hoedown_args[0], 512, options.IniFileName);
+	GetPrivateProfileString("Renderer", "UseSmartyPants", "", &smartypants_args[0], 512, options.IniFileName);
+	GetPrivateProfileString("Renderer", "CustomCSS", "", &html_template[0], 512, options.IniFileName);
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -132,7 +157,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				browser_host->mWebBrowser->Stop();
 				break;
 			case TBB_REFRESH:
-				browser_host->mWebBrowser->Refresh();
+				browser_host->mWebBrowser->Refresh();	// actually we'll need to reload the page here
 				break;
 			case TBB_PRINT:
 				SendMessage(hWnd, WM_IEVIEW_PRINT, 0, 0);
@@ -288,79 +313,128 @@ CComBSTR GetUrlFromFilename(char* FileToLoad)
 //							|		     |
 //							#------------#
 
-bool ends_with(std::string const & value, std::string const & ending)
+void do_events()
 {
-	if (ending.size() > value.size()) return false;
-	return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+	MSG msg;
+	BOOL result;
+
+	while (::PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	{
+		result = ::GetMessage(&msg, NULL, 0, 0);
+		if (result == 0) // WM_QUIT
+		{
+			::PostQuitMessage(msg.wParam);
+			break;
+		}
+		else if (result == -1)
+		{
+			// Handle errors/exit application, etc.
+		}
+		else
+		{
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+		}
+	}
 }
 
-bool ConvertMarkdown(char* FileToLoad, char* ResultFileName)
+void prepare_browser(CBrowserHost* browser_host)
 {
-	if (!ends_with(FileToLoad, ".mk") && !ends_with(FileToLoad, ".markdown") && !ends_with(FileToLoad, ".md"))
-		return false;
+	browser_host->mWebBrowser->Navigate(L"about:blank", NULL, NULL, NULL, NULL);
 
+	// it's really a bad method, but in practice we won't have to wait, so 
+	// perhaps the loop will never get executed
+	READYSTATE rs;
+	do
+	{
+		browser_host->mWebBrowser->get_ReadyState(&rs);
+		do_events();
+	} while (rs != READYSTATE_COMPLETE);
+}
+
+char* read_file(const char* FileToLoad)
+{
+	std::ifstream t;
+	int length;
+	t.open(FileToLoad);      
+	t.seekg(0, std::ios::end);
+	length = t.tellg();       
+	t.seekg(0, std::ios::beg); 
+	char* buffer = (char*)calloc(length + 1, 1);
+	t.read(buffer, length);
+	t.close();
+	return buffer;
+}
+
+void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
+{
+	INPUT_STRING = read_file(FileToLoad);
+
+	std::vector<std::string> hoedown_args_list;
+	std::istringstream f(hoedown_args);
+	std::string s;
+	while(f >> s) // space-separated list
+		hoedown_args_list.push_back(s); 
+	
+	const char* hoedown_argv[512];
+	for (int i = 0; i < hoedown_args_list.size(); ++i)
+		hoedown_argv[i] = hoedown_args_list[i].c_str();
+
+	hoedown_main(hoedown_args_list.size(), hoedown_argv);
+
+	SP_INPUT_STRING = OUTPUT_STRING;
+
+	char* smartypants_argv[] = { "smartypants" };
+	
+	if(smartypants_args[0] == '1')	// should use smartypants
+		smartypants_main(1, smartypants_argv);
+	else
+		smartypants_main_null(1, smartypants_argv);
+
+
+	// read HTML template
 	CHAR path[MAX_PATH];
 	GetModuleFileName(hinst, path, MAX_PATH);
 	PathRemoveFileSpec(path);
+	strcat(path, "\\");
+	strcat(path, html_template);
 
-	std::tmpnam(ResultFileName);
-	strcat(ResultFileName, ".html");
-	strcpy(result_file_name_copy, ResultFileName);
+	char* html_template_string = read_file(path);
+	std::string css(html_template_string);
+	std::string result = "<HTML><HEAD><style>" + css + "</style></HEAD><BODY>" + std::string(SP_OUTPUT_STRING) + "</BODY></HTML>";
 
-	char cmdbat[MAX_PATH];
-	char* p = strcpy(cmdbat, "cmd.exe /c ");
-	std::tmpnam(p);
-	strcat(p, ".bat");
+	//std::ofstream os("log.txt"); 
+	//os << result;
 
-	char batcopy[MAX_PATH];
-	strcpy(batcopy, p);
-
-	{
-		std::ofstream os(p);
-
-		os << "pushd " << path << std::endl;
-		os << "hoedown \"";
-		os << FileToLoad;
-		os << "\" | smartypants > \"";
-		os << ResultFileName << "\"";
-		os << std::endl << "popd";
-	}
-
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-
-	ZeroMemory(&si, sizeof(si));
-	si.cb = sizeof(si);
-	ZeroMemory(&pi, sizeof(pi));
-
-	if (CreateProcess(NULL, cmdbat, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, path, &si, &pi))
-	{
-		WaitForSingleObject(pi.hProcess, INFINITE);
-		CloseHandle(pi.hProcess);
-		CloseHandle(pi.hThread);
-	}
-
-	remove(batcopy);
+	prepare_browser(browser_host);
+	browser_host->LoadWebBrowserFromStreamWrapper(result.c_str());
 	
-	return true;
+	free(INPUT_STRING);
+	free(OUTPUT_STRING);
+	free(SP_OUTPUT_STRING);
+	free(html_template_string);
+}
+
+bool is_markdown(const char* FileToLoad)
+{
+	CAtlString url;
+	char ext[MAX_PATH];
+	_splitpath(FileToLoad, NULL, NULL, NULL, ext);
+	strlwr(ext);
+
+	return markdown_extensions.find(ext + 1);
 }
 
 int __stdcall ListLoadNext(HWND ParentWin, HWND PluginWin, char* FileToLoad, int ShowFlags)
 {
-	remove(result_file_name_copy);
-
-	char ResultFileName[MAX_PATH];
-	if (!ConvertMarkdown(FileToLoad, ResultFileName))
-		return NULL;
-	FileToLoad = &ResultFileName[0];
-
-	CComBSTR url = GetUrlFromFilename(FileToLoad);
-	if(url.Length()==0)
+	if (!is_markdown(FileToLoad))
 		return LISTPLUGIN_ERROR;
+
 	CBrowserHost* browser_host = (CBrowserHost*)GetProp(PluginWin, PROP_BROWSER);
 	if(!browser_host)
 		return LISTPLUGIN_ERROR;
-	browser_host->mWebBrowser->Navigate(url, NULL, NULL, NULL, NULL);
+	
+	browser_show_file(browser_host, FileToLoad);
 	return LISTPLUGIN_OK;
 }
 
@@ -369,13 +443,7 @@ HWND __stdcall ListLoad(HWND ParentWin, char* FileToLoad, int ShowFlags)
 	OleInitialize(NULL);
 	InitProc();
 
-	char ResultFileName[MAX_PATH];
-	if (!ConvertMarkdown(FileToLoad, ResultFileName))
-		return NULL;
-	FileToLoad = &ResultFileName[0];
-
-	CComBSTR url = GetUrlFromFilename(FileToLoad);
-	if(url.Length()==0)
+	if (!is_markdown(FileToLoad))
 		return NULL;
 
 	RECT Rect;
@@ -403,14 +471,16 @@ HWND __stdcall ListLoad(HWND ParentWin, char* FileToLoad, int ShowFlags)
 		toolbar = NULL;
 	SetProp(ListWin, PROP_TOOLBAR, toolbar);
 	browser_host = new CBrowserHost;
-	//browser_host->mFocusWin = qiuck_view?GetFocus():ListWin;
+	
 	browser_host->mFocusType = qiuck_view?fctQuickView:fctLister;
 	if(!browser_host->CreateBrowser(ListWin))
 	{
 		DestroyWindow(ListWin);
 		return NULL;
 	}
-	browser_host->mWebBrowser->Navigate(url, NULL, NULL, NULL, NULL);
+
+	browser_show_file(browser_host, FileToLoad);
+	
 	SetProp(ListWin, PROP_BROWSER, browser_host);
 	
 	if(/*!(options.flags&OPT_KEEPHOOKNOWINDOWS)&&*/hook_keyb==NULL/*&&num_lister_windows==0*/)
@@ -419,6 +489,7 @@ HWND __stdcall ListLoad(HWND ParentWin, char* FileToLoad, int ShowFlags)
 
 	return ListWin;
 }
+
 int __stdcall ListSendCommand(HWND ListWin,int Command,int Parameter)
 {
 	if(Command==lc_copy || Command==lc_selectall)

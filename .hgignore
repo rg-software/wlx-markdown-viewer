@@ -1,0 +1,21 @@
+syntax: glob
+.vs/**
+Hoedown/Win32/**
+Hoedown/x64/**
+Hoedown/hoedown.vcxproj.user
+Hoedown/hoedown-lib.vcxproj.user
+Hoedown/smartypants.vcxproj.user
+Hoedown/lib/hoedown-lib-x64.lib
+Hoedown/lib/hoedown-lib-Win32.lib
+HTMLView/MarkdownView.vcxproj.user
+Build/MarkdownView.wlx64
+HTMLView/Release/MarkdownView.pdb
+Build/MarkdownView.iobj
+Build/MarkdownView.ipdb
+Build/MarkdownView.wlx
+HTMLView/Win32/**
+HTMLView/x64/**
+ReleaseWLX/**
+Win32/**
+x64/**
+markdownviewer.zip

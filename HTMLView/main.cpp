@@ -391,6 +391,14 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
 	else
 		smartypants_main_null(1, smartypants_argv);
 
+	CHAR file_path[MAX_PATH];
+	CHAR file_url[MAX_PATH];
+	DWORD path_len = MAX_PATH;
+	strcpy(file_path, FileToLoad);
+	PathRemoveFileSpec(file_path);	// no file name, no trailing slash
+	UrlCreateFromPath(file_path, file_url, &path_len, NULL);
+	strcat(file_url, "/");
+
 
 	// read HTML template
 	CHAR path[MAX_PATH];
@@ -401,10 +409,14 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
 
 	char* html_template_string = read_file(path);
 	std::string css(html_template_string);
-	std::string result = "<HTML><HEAD><style>" + css + "</style></HEAD><BODY>" + std::string(SP_OUTPUT_STRING) + "</BODY></HTML>";
+	std::string result = "<HTML><HEAD><base href=\"" + 
+						 std::string(file_url) + "\"></base><style>" + 
+						 css + "</style></HEAD><BODY>" + 
+						 std::string(SP_OUTPUT_STRING) + 
+						 "</BODY></HTML>";
 
-	//std::ofstream os("log.txt"); 
-	//os << result;
+	// std::ofstream os("log.txt"); 
+	// os << result;
 
 	prepare_browser(browser_host);
 	browser_host->LoadWebBrowserFromStreamWrapper(result.c_str());

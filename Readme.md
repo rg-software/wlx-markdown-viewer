@@ -11,7 +11,7 @@ Plugin configuration is specified in `MarkdownView.ini` for options. Markdown-re
 * `UseSmartypants`: controls whether `smartypants` should be invoked after processing.
 * `CustomCSS`: a path to a custom CSS file for customizing the resulting look of the document. A collection of four CSS files from [Markdown CSS](http://markdowncss.github.io/) is included into the package.
 
-For more information on `hoedown` arguments and `smartypants` functionality, check [this quick reference](https://raw.githubusercontent.com/rg-software/wlx-markdown-viewer/master/hoedown.html).
+For more information on `hoedown` arguments and `smartypants` functionality, check [this quick reference](http://htmlpreview.github.com?https://github.com/rg-software/wlx-markdown-viewer/blob/master/hoedown.html).
 
 # Setup
 The binary plugin archive comes with the setup script. Just enter the archive, and confirm installation.

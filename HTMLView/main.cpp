@@ -375,8 +375,8 @@ template<typename T> std::vector<T> read_file_char(const char* FileToLoad, TextE
 std::string read_file(const char* FileToLoad)
 {
 	auto buffer = read_file_char<char>(FileToLoad);
-	TextEncodingDetect textDetect;
-	TextEncodingDetect::Encoding e = textDetect.DetectEncoding((unsigned char*)&buffer[0], buffer.size());
+
+	TextEncodingDetect::Encoding e = TextEncodingDetect().DetectEncoding((unsigned char*)&buffer[0], buffer.size());
 	if (e == TextEncodingDetect::UTF16_LE_BOM || e == TextEncodingDetect::UTF16_LE_NOBOM ||
 		e == TextEncodingDetect::UTF16_BE_BOM || e == TextEncodingDetect::UTF16_BE_NOBOM)
 	{
@@ -391,6 +391,12 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
 {
 	std::string utf8_text = read_file(FileToLoad);
 	INPUT_STRING = utf8_text.c_str();
+
+	// we have converted everything to utf8 (but the detector can still return None or ANSI)
+	TextEncodingDetect::Encoding e = TextEncodingDetect().DetectEncoding((unsigned char*)utf8_text.c_str(), utf8_text.size());
+	std::string meta;
+	if (e == TextEncodingDetect::UTF8_BOM || e == TextEncodingDetect::UTF8_NOBOM)
+		meta = "<meta charset='utf-8'>";
 
 	std::vector<std::string> hoedown_args_list;
 	std::istringstream f(hoedown_args);
@@ -429,7 +435,7 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
 	strcat(path, html_template);
 
 	std::string css(read_file(path));
-	std::string result = "<HTML><HEAD><base href=\"" +
+	std::string result = "<HTML><HEAD>" + meta + "<base href=\"" +
 						 std::string(file_url) + "\"></base><style>" + 
 						 css + "</style></HEAD><BODY>" +
 						 std::string(SP_OUTPUT_STRING) + 

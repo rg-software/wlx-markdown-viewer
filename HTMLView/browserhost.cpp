@@ -909,40 +909,25 @@ DWORD WINAPI NewWindowThreadFunc(LPVOID param)
 	return 0;
 }
 
+#include <strsafe.h>
+
 void CBrowserHost::LoadWebBrowserFromStreamWrapper(const char* html)
 {
-	auto wstrTo(boost::nowide::widen(html));
+	IStream* pStream = NULL;
+	pStream = SHCreateMemStream((const BYTE*)html, strlen(html) + 1);
 
-	IDispatch* pHtmlDoc;
+	IDispatch* pHtmlDoc = NULL;
+	IPersistStreamInit* pPersistStreamInit = NULL;
+
 	mWebBrowser->get_Document(&pHtmlDoc);
-	if (!pHtmlDoc)
-		return;
 	
-	CComPtr<IHTMLDocument2> doc2;
-	doc2.Attach((IHTMLDocument2*)pHtmlDoc);
-	if (!doc2)
-		return;
-	
-	// Creates a new one-dimensional array
-	SAFEARRAY* psaStrings = SafeArrayCreateVector(VT_VARIANT, 0, 1);
-	if (!psaStrings)
-		return;
+	pHtmlDoc->QueryInterface(IID_IPersistStreamInit, (void**)&pPersistStreamInit);
+	pPersistStreamInit->InitNew();
+	pPersistStreamInit->Load(pStream);
+	pPersistStreamInit->Release();
+	pHtmlDoc->Release();
 
-	BSTR bstrt = SysAllocString(wstrTo.c_str());
-	VARIANT* param;
-	if (SUCCEEDED(SafeArrayAccessData(psaStrings, (LPVOID*)&param)))
-	{
-		param->vt = VT_BSTR;
-		param->bstrVal = bstrt;
-		if (SUCCEEDED(SafeArrayUnaccessData(psaStrings)))
-		{
-			doc2->write(psaStrings);
-			doc2->close();
-		}
-	}
-
-	if (psaStrings)
-		SafeArrayDestroy(psaStrings);
+	pStream->Release();
 }
 
 HRESULT STDMETHODCALLTYPE CBrowserHost::Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,

@@ -9,15 +9,23 @@
 #include <ExDispID.h>
 #include "common.h"
 #include <locale>
+#include <fstream>
+#include <iostream>
+#include <vector>
+#include <iterator>
 #include <codecvt>
 #include <algorithm>
+#include <boost/nowide/convert.hpp>
+#include "TextEncodingDetect/text_encoding_detect.h"
+
+using namespace AutoIt::Common;
 
 HHOOK hook_keyb = NULL;
 HIMAGELIST img_list = NULL;
 int num_lister_windows = 0;
 
-char* INPUT_STRING;
-char* SP_INPUT_STRING;
+const char* INPUT_STRING;
+const char* SP_INPUT_STRING;
 char* OUTPUT_STRING;
 char* SP_OUTPUT_STRING;
 extern "C" int hoedown_main(int argc, const char **argv);
@@ -352,23 +360,37 @@ void prepare_browser(CBrowserHost* browser_host)
 	} while (rs != READYSTATE_COMPLETE);
 }
 
-char* read_file(const char* FileToLoad)
+template<typename T> std::vector<T> read_file_char(const char* FileToLoad, TextEncodingDetect::Encoding e = TextEncodingDetect::None)
 {
-	std::ifstream t;
-	int length;
-	t.open(FileToLoad);      
-	t.seekg(0, std::ios::end);
-	length = t.tellg();       
-	t.seekg(0, std::ios::beg); 
-	char* buffer = (char*)calloc(length + 1, 1);
-	t.read(buffer, length);
-	t.close();
-	return buffer;
+	std::basic_ifstream<T> in(FileToLoad, std::ios::binary);
+
+	if(e == TextEncodingDetect::UTF16_LE_BOM || e == TextEncodingDetect::UTF16_BE_BOM)
+		in.imbue(std::locale(in.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, std::consume_header>));
+
+	std::istreambuf_iterator<T> it(in);
+
+	return std::vector<T>(it, {});
+}
+
+std::string read_file(const char* FileToLoad)
+{
+	auto buffer = read_file_char<char>(FileToLoad);
+	TextEncodingDetect textDetect;
+	TextEncodingDetect::Encoding e = textDetect.DetectEncoding((unsigned char*)&buffer[0], buffer.size());
+	if (e == TextEncodingDetect::UTF16_LE_BOM || e == TextEncodingDetect::UTF16_LE_NOBOM ||
+		e == TextEncodingDetect::UTF16_BE_BOM || e == TextEncodingDetect::UTF16_BE_NOBOM)
+	{
+		auto wr = read_file_char<wchar_t>(FileToLoad, e);
+		return boost::nowide::narrow(std::wstring(wr.begin(), wr.end()));
+	}
+
+	return std::string(buffer.begin(), buffer.end());
 }
 
 void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
 {
-	INPUT_STRING = read_file(FileToLoad);
+	std::string utf8_text = read_file(FileToLoad);
+	INPUT_STRING = utf8_text.c_str();
 
 	std::vector<std::string> hoedown_args_list;
 	std::istringstream f(hoedown_args);
@@ -399,7 +421,6 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
 	UrlCreateFromPath(file_path, file_url, &path_len, NULL);
 	strcat(file_url, "/");
 
-
 	// read HTML template
 	CHAR path[MAX_PATH];
 	GetModuleFileName(hinst, path, MAX_PATH);
@@ -407,24 +428,19 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
 	strcat(path, "\\");
 	strcat(path, html_template);
 
-	char* html_template_string = read_file(path);
-	std::string css(html_template_string);
-	std::string result = "<HTML><HEAD><base href=\"" + 
+	std::string css(read_file(path));
+	std::string result = "<HTML><HEAD><base href=\"" +
 						 std::string(file_url) + "\"></base><style>" + 
-						 css + "</style></HEAD><BODY>" + 
+						 css + "</style></HEAD><BODY>" +
 						 std::string(SP_OUTPUT_STRING) + 
 						 "</BODY></HTML>";
 
-	// std::ofstream os("log.txt"); 
-	// os << result;
 
 	prepare_browser(browser_host);
-	browser_host->LoadWebBrowserFromStreamWrapper(result.c_str());
+	browser_host->LoadWebBrowserFromStreamWrapper(result.c_str()); // utf8
 	
-	free(INPUT_STRING);
 	free(OUTPUT_STRING);
 	free(SP_OUTPUT_STRING);
-	free(html_template_string);
 }
 
 bool is_markdown(const char* FileToLoad)

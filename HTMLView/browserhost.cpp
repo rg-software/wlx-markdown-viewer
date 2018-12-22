@@ -5,6 +5,7 @@
 
 #include "browserhost.h"
 #include "functions.h"
+#include <boost/nowide/convert.hpp>
 
 CBrowserHost::CBrowserHost() :
 	//mFocusWin(NULL),
@@ -910,6 +911,7 @@ DWORD WINAPI NewWindowThreadFunc(LPVOID param)
 
 void CBrowserHost::LoadWebBrowserFromStreamWrapper(const char* html)
 {
+	auto wstrTo(boost::nowide::widen(html));
 
 	IDispatch* pHtmlDoc;
 	mWebBrowser->get_Document(&pHtmlDoc);
@@ -926,12 +928,12 @@ void CBrowserHost::LoadWebBrowserFromStreamWrapper(const char* html)
 	if (!psaStrings)
 		return;
 
-	_bstr_t bstrt(html);
+	BSTR bstrt = SysAllocString(wstrTo.c_str());
 	VARIANT* param;
 	if (SUCCEEDED(SafeArrayAccessData(psaStrings, (LPVOID*)&param)))
 	{
 		param->vt = VT_BSTR;
-		param->bstrVal = bstrt.GetBSTR(); // bstr;
+		param->bstrVal = bstrt;
 		if (SUCCEEDED(SafeArrayUnaccessData(psaStrings)))
 		{
 			doc2->write(psaStrings);

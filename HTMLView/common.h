@@ -15,13 +15,13 @@
 #define count_of(arr) (sizeof(arr)/sizeof(0[arr]))
 
 #ifdef __cplusplus
-extern "C" char* INPUT_STRING;
-extern "C" char* SP_INPUT_STRING;
+extern "C" const char* INPUT_STRING;
+extern "C" const char* SP_INPUT_STRING;
 extern "C" char* OUTPUT_STRING;
 extern "C" char* SP_OUTPUT_STRING;
 #else
-extern char* INPUT_STRING;
-extern char* SP_INPUT_STRING;
+extern const char* INPUT_STRING;
+extern const char* SP_INPUT_STRING;
 extern char* OUTPUT_STRING;
 extern char* SP_OUTPUT_STRING;
 #endif

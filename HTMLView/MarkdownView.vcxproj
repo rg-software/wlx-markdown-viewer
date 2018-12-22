@@ -152,7 +152,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)Hoedown\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HTMLVIEW_EXPORTS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -162,13 +162,14 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(SolutionDir)\Build\$(ProjectName).wlx64</OutputFile>
+      <AdditionalDependencies>comctl32.lib;comsuppw.lib;hoedown-lib-x64D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(SolutionDir)\Build\$(ProjectName)D.wlx64</OutputFile>
       <ModuleDefinitionFile>htmlview.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(ProjectDir)$(Configuration)\$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(SolutionDir)Hoedown\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -190,7 +191,7 @@
       <AdditionalDependencies>comctl32.lib;comsuppw.lib;hoedown-lib-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)\Build\$(ProjectName).wlx64</OutputFile>
       <ModuleDefinitionFile>htmlview.def</ModuleDefinitionFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>$(ProjectDir)$(Configuration)\$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -208,6 +209,7 @@
     <ClCompile Include="hoedown.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="smartypants.c" />
+    <ClCompile Include="TextEncodingDetect\text_encoding_detect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="htmlview.def" />
@@ -218,6 +220,7 @@
     <ClInclude Include="functions.h" />
     <ClInclude Include="listerplugin.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="TextEncodingDetect\text_encoding_detect.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="HTMLView.rc" />

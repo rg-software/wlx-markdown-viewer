@@ -1,5 +1,13 @@
 :: This script creates a release (setup) package using a prebuilt project.
 @echo off
+setlocal
+
+call "%VCINSTALLDIR%\Auxiliary\Build\vcvarsall.bat" x86
+msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=Win32;UseEnv=true
+
+call "%VCINSTALLDIR%\Auxiliary\Build\vcvarsall.bat" x64
+msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=x64;UseEnv=true
+
 
 rmdir /S /Q ReleaseWLX
 mkdir ReleaseWLX

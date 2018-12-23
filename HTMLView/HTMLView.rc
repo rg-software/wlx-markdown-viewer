@@ -51,12 +51,12 @@ BEGIN
     BEGIN
         BLOCK "000004b0"
         BEGIN
-            VALUE "FileDescription", "HTMLView plugin for Total Commander"
-            VALUE "FileVersion", "1.2.6"
-            VALUE "InternalName", "HTMLView"
-            VALUE "OriginalFilename", "HTMLView.wlx"
-            VALUE "ProductName", "HTMLView"
-            VALUE "ProductVersion", "1.2.6"
+            VALUE "FileDescription", "Markdown lister plugin for Total Commander"
+            VALUE "FileVersion", "2.3"
+            VALUE "InternalName", "MarkdownView"
+            VALUE "OriginalFilename", "MarkdownView.wlx"
+            VALUE "ProductName", "MarkdownView"
+            VALUE "ProductVersion", "2.3"
         END
     END
     BLOCK "VarFileInfo"

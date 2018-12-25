@@ -24,6 +24,11 @@ HHOOK hook_keyb = NULL;
 HIMAGELIST img_list = NULL;
 int num_lister_windows = 0;
 
+// used to by the refresh function
+char FileToLoadCopy[MAX_PATH];
+HWND ParentWinCopy;
+int ShowFlagsCopy;
+
 const char* INPUT_STRING;
 const char* SP_INPUT_STRING;
 char* OUTPUT_STRING;
@@ -43,6 +48,14 @@ CSmallStringList typing_trans_hotkeys;
 char hoedown_args[512];
 char smartypants_args[512];
 char html_template[512];
+
+void RefreshBrowser();
+void StoreRefreshParams(const char* FileToLoad, HWND ParentWin, int ShowFlags)
+{
+	strcpy(FileToLoadCopy, FileToLoad);
+	ParentWinCopy = ParentWin;
+	ShowFlagsCopy = ShowFlags;
+}
 
 LRESULT CALLBACK HookKeybProc(int nCode,WPARAM wParam,LPARAM lParam)
 {
@@ -165,7 +178,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				browser_host->mWebBrowser->Stop();
 				break;
 			case TBB_REFRESH:
-				browser_host->mWebBrowser->Refresh();	// actually we'll need to reload the page here
+				RefreshBrowser(); // instead of browser_host->mWebBrowser->Refresh();
 				break;
 			case TBB_PRINT:
 				SendMessage(hWnd, WM_IEVIEW_PRINT, 0, 0);
@@ -468,9 +481,11 @@ int __stdcall ListLoadNext(HWND ParentWin, HWND PluginWin, char* FileToLoad, int
 	if(!browser_host)
 		return LISTPLUGIN_ERROR;
 	
+	StoreRefreshParams(FileToLoad, ParentWin, ShowFlags);
 	browser_show_file(browser_host, FileToLoad);
 	return LISTPLUGIN_OK;
 }
+
 
 HWND __stdcall ListLoad(HWND ParentWin, char* FileToLoad, int ShowFlags)
 {
@@ -513,6 +528,7 @@ HWND __stdcall ListLoad(HWND ParentWin, char* FileToLoad, int ShowFlags)
 		return NULL;
 	}
 
+	StoreRefreshParams(FileToLoad, ParentWin, ShowFlags);
 	browser_show_file(browser_host, FileToLoad);
 	
 	SetProp(ListWin, PROP_BROWSER, browser_host);
@@ -522,6 +538,11 @@ HWND __stdcall ListLoad(HWND ParentWin, char* FileToLoad, int ShowFlags)
 	++num_lister_windows;
 
 	return ListWin;
+}
+
+void RefreshBrowser()
+{
+	ListLoad(ParentWinCopy, FileToLoadCopy, ShowFlagsCopy);
 }
 
 int __stdcall ListSendCommand(HWND ListWin,int Command,int Parameter)

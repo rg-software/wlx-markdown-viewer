@@ -17,4 +17,4 @@ For more information on `hoedown` arguments and `smartypants` functionality, che
 The binary plugin archive comes with the setup script. Just enter the archive, and confirm installation.
 
 # Development
-The current project file can be compiled with Visual Studio 2017. For the sake of Windows XP support, `141_xp` toolset is used (enable `Windows XP support for C++` option in the optional components of the `Desktop development with C++` workload to install it).
+The current project file can be compiled with Visual Studio 2017. For the sake of Windows XP support, `141_xp` toolset is used (enable `Windows XP support for C++` option in the optional components of the `Desktop development with C++` workload to install it). Note that `/Zc:threadSafeInit-` compiler switch is needed for Windows XP only, so we can remove it in the future.

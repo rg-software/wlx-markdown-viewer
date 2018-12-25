@@ -620,6 +620,9 @@ void CBrowserHost::HideShowImages(bool remove)
 	HideShowImagesInHTMLDocument(html_doc2, remove);
 	mImagesHidden = !mImagesHidden;
 }
+
+void RefreshBrowser(); // defined in main()
+
 void CBrowserHost::ProcessHotkey(UINT Msg, DWORD Key, DWORD Info)
 {
 	char str_action[80];
@@ -635,7 +638,7 @@ void CBrowserHost::ProcessHotkey(UINT Msg, DWORD Key, DWORD Info)
 		else if(!strcmpi(str_action,"Stop"))
 			mWebBrowser->Stop();
 		else if(!strcmpi(str_action,"Refresh"))
-			mWebBrowser->Refresh();
+			RefreshBrowser(); // instead of mWebBrowser->Refresh();
 		else if(!strcmpi(str_action,"SavePosition"))
 			SavePosition();
 		else if(!strcmpi(str_action,"LoadPosition"))

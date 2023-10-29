@@ -1,3 +1,6 @@
+#ifndef E_BOUNDS
+#define E_BOUNDS                         _HRESULT_TYPEDEF_(0x8000000BL)
+#endif
 
 #include <ExDispID.h>
 #include <mshtmdid.h>

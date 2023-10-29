@@ -16,10 +16,8 @@
 // Neutral resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
-#ifdef _WIN32
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 #pragma code_page(1251)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -27,7 +25,9 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 IDB_BITMAP1             BITMAP                  "toolbar_graybk.bmp"
+
 IDB_BITMAP2             BITMAP                  "toolbar.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -35,8 +35,8 @@ IDB_BITMAP2             BITMAP                  "toolbar.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,3,0,0
- PRODUCTVERSION 2,3,0,0
+ FILEVERSION 2,3,1,0
+ PRODUCTVERSION 2,3,1,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -52,11 +52,11 @@ BEGIN
         BLOCK "000004b0"
         BEGIN
             VALUE "FileDescription", "Markdown lister plugin for Total Commander"
-            VALUE "FileVersion", "2.3"
+            VALUE "FileVersion", "2.3.1.0"
             VALUE "InternalName", "MarkdownView"
             VALUE "OriginalFilename", "MarkdownView.wlx"
             VALUE "ProductName", "MarkdownView"
-            VALUE "ProductVersion", "2.3"
+            VALUE "ProductVersion", "2.3.1.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -70,13 +70,11 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Russian resources
+// Russian (Russia) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
-#ifdef _WIN32
 LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
 #pragma code_page(1251)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -103,7 +101,7 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // Russian resources
+#endif    // Russian (Russia) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

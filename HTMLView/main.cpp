@@ -1,3 +1,7 @@
+#ifndef E_BOUNDS
+#define E_BOUNDS                         _HRESULT_TYPEDEF_(0x8000000BL)
+#endif
+
 #include <direct.h>
 #include <windows.h>
 #include <fstream>
@@ -37,8 +41,6 @@ extern "C" int hoedown_main(int argc, const char **argv);
 extern "C" int smartypants_main(int argc, char **argv);
 extern "C" int smartypants_main_null(int argc, char **argv);
 
-char result_file_name_copy[MAX_PATH];
-
 CSmallStringList html_extensions;
 CSmallStringList markdown_extensions;
 CSmallStringList chm_extensions;
@@ -50,6 +52,7 @@ char smartypants_args[512];
 char html_template[512];
 
 void RefreshBrowser();
+
 void StoreRefreshParams(const char* FileToLoad, HWND ParentWin, int ShowFlags)
 {
 	strcpy(FileToLoadCopy, FileToLoad);
@@ -474,7 +477,8 @@ bool is_markdown(const char* FileToLoad)
 
 int __stdcall ListLoadNext(HWND ParentWin, HWND PluginWin, char* FileToLoad, int ShowFlags)
 {
-	if (!is_markdown(FileToLoad))
+	CComBSTR url = GetUrlFromFilename(FileToLoad);
+	if (url.Length() == 0 && !is_markdown(FileToLoad))
 		return LISTPLUGIN_ERROR;
 
 	CBrowserHost* browser_host = (CBrowserHost*)GetProp(PluginWin, PROP_BROWSER);
@@ -482,7 +486,12 @@ int __stdcall ListLoadNext(HWND ParentWin, HWND PluginWin, char* FileToLoad, int
 		return LISTPLUGIN_ERROR;
 	
 	StoreRefreshParams(FileToLoad, ParentWin, ShowFlags);
-	browser_show_file(browser_host, FileToLoad);
+	
+	if (is_markdown(FileToLoad))
+		browser_show_file(browser_host, FileToLoad);
+	else
+		browser_host->mWebBrowser->Navigate(url, NULL, NULL, NULL, NULL);
+
 	return LISTPLUGIN_OK;
 }
 
@@ -492,7 +501,9 @@ HWND __stdcall ListLoad(HWND ParentWin, char* FileToLoad, int ShowFlags)
 	OleInitialize(NULL);
 	InitProc();
 
-	if (!is_markdown(FileToLoad))
+	CComBSTR url = GetUrlFromFilename(FileToLoad);
+	
+	if (url.Length() == 0 && !is_markdown(FileToLoad))
 		return NULL;
 
 	RECT Rect;
@@ -529,7 +540,11 @@ HWND __stdcall ListLoad(HWND ParentWin, char* FileToLoad, int ShowFlags)
 	}
 
 	StoreRefreshParams(FileToLoad, ParentWin, ShowFlags);
-	browser_show_file(browser_host, FileToLoad);
+
+	if(is_markdown(FileToLoad))
+		browser_show_file(browser_host, FileToLoad);
+	else
+		browser_host->mWebBrowser->Navigate(url, NULL, NULL, NULL, NULL);
 	
 	SetProp(ListWin, PROP_BROWSER, browser_host);
 	
@@ -571,7 +586,6 @@ void __stdcall ListCloseWindow(HWND ListWin)
 {
     DestroyWindow(ListWin);
 	OleUninitialize();
-	remove(result_file_name_copy);
 
 	--num_lister_windows;
 	if(!(options.flags&OPT_KEEPHOOKNOWINDOWS)&&hook_keyb&&num_lister_windows==0)

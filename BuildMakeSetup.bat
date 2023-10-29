@@ -19,7 +19,5 @@ copy Build\*.inf ReleaseWLX\
 copy Build\*.md ReleaseWLX\
 copy Build\css\*.* ReleaseWLX\css\
 
-del /Q markdownviewer.zip
-
-powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('ReleaseWLX', 'markdownviewer.zip'); }"
-echo Resulting file markdownviewer.zip created!
+del /Q *.zip
+powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('ReleaseWLX', 'Release-' + (get-date -Format yyyyMMdd) +'.zip'); }"

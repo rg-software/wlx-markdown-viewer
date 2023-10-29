@@ -1,5 +1,8 @@
-#include <mshtmdid.h>
+#ifndef E_BOUNDS
+#define E_BOUNDS                         _HRESULT_TYPEDEF_(0x8000000BL)
+#endif
 
+#include <mshtmdid.h>
 #include "functions.h"
 
 extern "C"

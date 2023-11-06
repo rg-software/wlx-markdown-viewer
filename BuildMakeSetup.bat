@@ -19,5 +19,5 @@ copy Build\*.inf ReleaseWLX\
 copy Build\*.md ReleaseWLX\
 copy Build\css\*.* ReleaseWLX\css\
 
-del /Q *.zip
+del /Q Release*.zip
 powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('ReleaseWLX', 'Release-' + (get-date -Format yyyyMMdd) +'.zip'); }"

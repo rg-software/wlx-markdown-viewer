@@ -35,8 +35,8 @@ IDB_BITMAP2             BITMAP                  "toolbar.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,3,2,0
- PRODUCTVERSION 2,3,2,0
+ FILEVERSION 2,4,0,0
+ PRODUCTVERSION 2,4,0,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -52,11 +52,11 @@ BEGIN
         BLOCK "000004b0"
         BEGIN
             VALUE "FileDescription", "Markdown lister plugin for Total Commander"
-            VALUE "FileVersion", "2.3.2.0"
+            VALUE "FileVersion", "2.4.0.0"
             VALUE "InternalName", "MarkdownView"
             VALUE "OriginalFilename", "MarkdownView.wlx"
             VALUE "ProductName", "MarkdownView"
-            VALUE "ProductVersion", "2.3.2.0"
+            VALUE "ProductVersion", "2.4.0.0"
         END
     END
     BLOCK "VarFileInfo"

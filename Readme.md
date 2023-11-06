@@ -17,7 +17,7 @@ For more information on `hoedown` arguments and `smartypants` functionality, che
 
 ## Internet Explorer Update
 
-The plugin is based on an obsolete Internet Explorer engine, which can be upgraded via [registry hacks](https://raw.githubusercontent.com/rg-software/wlx-markdown-viewer/master/ie_upgrade_registry.zip) (check [MSDN](https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/general-info/ee330730(v=vs.85)?redirectedfrom=MSDN#browser-emulation) for details.)
+The plugin is based on an obsolete Internet Explorer engine, which can be upgraded via [registry hacks](https://github.com/rg-software/wlx-markdown-viewer/raw/master/ie_upgrade_registry.zip) (check [MSDN](https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/general-info/ee330730(v=vs.85)?redirectedfrom=MSDN#browser-emulation) for details.)
 
 ## Setup
 

@@ -1,0 +1,332 @@
+/*
+GitHub css for use with MarkdownView.wlx
+Based on: https://github.com/hyrious/github-markdown-css
+*/
+
+/***************  COLOR PALETTE  ****************
+ body background...............: #0d1117
+ body text.....................: #c9d1d9
+ code & blockquote background..: #161b22
+ blockquote text...............: #8b949e
+ borders (1)...................: #21262d
+ borders (2)...................: #30363d
+ table headers.................: #080A0D
+ links.........................: #58a6ff
+ marks.........................: #e7d210
+ ************************************************/
+
+
+/******************    MAIN    ******************/
+body {
+  font-family:'Arial Nova','Helvetica Neue',Helvetica,'Segoe UI',Arial,sans-serif,'Segoe UI Emoji','Noto Emoji';
+  font-size:12pt;
+  line-height:1.6;
+  color:#c9d1d9;
+  background-color:#0d1117;
+  margin-left:1em;
+  padding: 15px;
+  overflow:initial;
+  box-sizing:border-box;
+  word-wrap:break-word;
+  scrollbar-base-color:       #080A0D;
+  scrollbar-track-color:      #080A0D;
+  scrollbar-face-color:       #161b22;
+  scrollbar-shadow-color:     #161b22;
+  scrollbar-arrow-color:      #58a6ff;
+  /*next ones have no effect on Win 10*/
+  scrollbar-highlight-color:  #161b22;
+  scrollbar-3dlight-color:    #080A0D;
+  scrollbar-darkshadow-color: #080A0D;
+}
+body > *:first-child {
+  margin-top: 0 !important;
+}
+body > *:last-child {
+  margin-bottom: 0 !important;
+}
+h1 {
+  font-size:2.15em;
+  font-weight:600;
+  line-height:1.2;
+  margin-top:2em;
+}
+h2 {
+  font-size:1.75em;
+  font-weight:600;
+  line-height:1.2;
+  padding-bottom:.2em;
+  border-bottom: 2px solid #21262d;
+  margin-top:1.4em;
+  margin-bottom:.5em;
+}
+h3 {
+  font-size:1.5em;
+  font-weight:600;
+  line-height:1.2;
+  margin-top:1.2em;
+  margin-bottom:.3em;
+}
+h4 {
+  font-size:1.25em;
+  font-weight:600;
+  line-height:1.2;
+  margin-top:1em;
+  margin-bottom:0;
+}
+h5 {
+  font-size:1.1em;
+  font-weight:600;
+  line-height:1.2;
+  margin-top:.7em;
+  margin-bottom:0;
+}
+h6 {
+  color:#8b949e;
+  font-size:1em;
+  font-weight:600;
+  line-height:1.2;
+  margin-top:.7em;
+  margin-bottom:0;
+}
+h2:first-child,
+h1:first-child,
+h1:first-child + h2,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child
+{
+  margin-top: 0;
+  padding-top: 0;
+}
+body > h2:first-child,
+body > h1:first-child,
+body > h1:first-child + h2,
+body > h3:first-child,
+body > h4:first-child,
+body > h5:first-child,
+body > h6:first-child
+{
+  margin-top: 0;
+  padding-top: 0;
+}
+h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+  margin-top: 0;
+}
+h4 + pre {
+  margin-top: .3em;
+}
+a:not([href]) {
+  color:inherit;
+  text-decoration:none;
+}
+a {
+  color:#58a6ff;
+  text-decoration:none;
+}
+a:hover {
+  text-decoration:underline;
+}
+img {
+  max-width:100%;
+}
+body>p {
+  margin-top:0;
+  margin-bottom:16px;
+  word-wrap:break-word;
+}
+body>ul,
+body>ol {
+  margin-bottom:16px;
+}
+ul,
+ol {
+  padding-left:32px;
+}
+ul.no-list,
+ol.no-list {
+  padding:0;
+  list-style-type:none;
+}
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin-top:0;
+  margin-bottom:0;
+}
+li {
+  margin-bottom:0;
+}
+li > p {
+  margin-top:0;
+  margin-bottom:0;
+}
+li > p + pre {
+  margin-top:.5em;
+}
+blockquote {
+  margin:16px 0;
+  font-size:inherit;
+  padding:5px 15px;
+  color:#8b949e;
+  background-color:#161b22;
+  border-left:4px solid #30363d;
+  border-radius:0 4px 4px 0;
+}
+blockquote>:first-child {
+  margin-top:0;
+}
+blockquote>:last-child {
+  margin-bottom:0;
+}
+hr {
+  height:3px;
+  margin:32px 0;
+  background-color:#30363d;
+  border:0 none;
+}
+table {
+  margin:10px 0 15px 0;
+  font-size:12pt;
+  border-collapse:collapse;
+  border-spacing:0;
+  display:block;
+  overflow:auto;
+  word-break:normal;
+  word-break:keep-all;
+}
+table th {
+  font-weight:bold;
+  background-color: #080A0D;
+  font-size:.9em;
+}
+table td,
+table th {
+  border:1px solid #30363d;
+  padding:6px 13px;
+}
+table td code {
+  font-size:.9em;
+}
+dl {
+  padding:0;
+}
+dl dt {
+  padding:0;
+  margin-top:16px;
+  font-size:1em;
+  font-style:italic;
+  font-weight:bold;
+}
+dl dd {
+  padding:0 16px;
+  margin-bottom:16px;
+}
+code {
+  font-family:Consolas,'Liberation Mono',Menlo,'Courier New',monospace;
+  font-size:.9em;
+  background-color:#161b22;
+  border:0 none;
+  padding:.15em .2em;
+}
+code::before,
+code::after {
+  letter-spacing:-0.2em;
+  content:"\00a0";
+}
+pre>code {
+  padding:0;
+  margin:0;
+  font-size:.85em !important;
+  word-break:normal;
+  white-space:pre;
+  background-color:transparent;
+  border:0;
+}
+pre code,
+pre tt {
+  display:inline;
+  max-width:initial;
+  padding:0;
+  margin:0;
+  overflow:initial;
+  line-height:inherit;
+  word-wrap:normal;
+  background-color:transparent;
+  border:0;
+}
+pre code:before,
+pre tt:before,
+pre code:after,
+pre tt:after {
+  content:normal;
+}
+h2 code {
+  padding-top:.1em;
+  padding-bottom:.24em;
+  border-radius:3px 3px 0 0;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+pre {
+  margin-top:0;
+  margin-bottom:16px;
+}
+/* Code blocks */
+pre {
+  background-color:#161b22;
+  line-height:1.4;
+  padding:1.2em;
+  border:0;
+  border-radius:6px;
+  overflow:auto;
+  word-wrap: normal;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+}
+kbd {
+  background-color:#161b22;
+  font-size:.9em;
+  padding:2px 4px;
+  border:1px solid #30363d;
+  border-bottom:2px solid #30363d;
+  border-radius:3px;
+  box-shadow: inset 0 -1px 0 #30363d;
+}
+
+/****************** EXTENSIONS ******************/
+
+.footnotes {
+  font-size: .75em;
+}
+.footnotes hr {
+  height:1px;
+  background-color:#21262d;
+}
+del {
+  color:#8b949e;
+}
+mark {
+  color:#e7d210;
+  background-color:#0d1117;
+}
+
+/******************   DOUBTS   ******************/
+/*
+code, pre {
+  -o-tab-size: 8;
+  tab-size: 8;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+// Inline code
+:not(pre) > code {
+  padding: .1em;
+  white-space: normal;
+}
+*/

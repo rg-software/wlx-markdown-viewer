@@ -1,0 +1,346 @@
+/*
+GitHub css for use with MarkdownView.wlx
+Based on: https://github.com/hyrious/github-markdown-css
+*/
+
+/***************  COLOR PALETTE  ****************
+ body background...............: #ffffff
+ body text.....................: #24292f
+ headers.......................: #1c2025
+ header code background........: #e1e4e9
+ code background...............: #d8dee4
+ blockquote background.........: #f6f8fa
+ blockquote text...............: #57606a
+ borders.......................: #d0d7de
+ table header background.......: #edeff3
+ links.........................: #0969da
+ marks.........................: #fff8c5
+ ************************************************/
+
+
+/******************    MAIN    ******************/
+body {
+  font-family:'Arial Nova','Helvetica Neue',Helvetica,'Segoe UI',Arial,sans-serif,'Segoe UI Emoji','Noto Emoji';
+  font-size:12pt;
+  line-height:1.6;
+  color:#24292f;
+  background-color:#ffffff;
+  margin-left:1em;
+  padding: 15px;
+  overflow:initial;
+  box-sizing:border-box;
+  word-wrap:break-word;
+}
+body > *:first-child {
+  margin-top: 0 !important;
+}
+body > *:last-child {
+  margin-bottom: 0 !important;
+}
+h1 {
+  color:#1C2025;
+  font-size:2.15em;
+  font-weight:600;
+  line-height:1.2;
+  margin-top:2em;
+}
+h2 {
+  color:#1C2025;
+  font-size:1.75em;
+  font-weight:600;
+  line-height:1.2;
+  padding-bottom:.2em;
+  border-bottom: 1px solid #D9E1E8;
+  margin-top:1.4em;
+  margin-bottom:.5em;
+}
+h3 {
+  color:#1C2025;
+  font-size:1.5em;
+  font-weight:600;
+  line-height:1.2;
+  margin-top:1.2em;
+  margin-bottom:.3em;
+}
+h4 {
+  color:#1C2025;
+  font-size:1.25em;
+  font-weight:600;
+  line-height:1.2;
+  margin-top:1em;
+  margin-bottom:0;
+}
+h5 {
+  color:#1C2025;
+  font-size:1.1em;
+  font-weight:600;
+  line-height:1.2;
+  margin-top:.7em;
+  margin-bottom:0;
+}
+h6 {
+  color:#57606a;
+  font-size:1em;
+  font-weight:600;
+  line-height:1.2;
+  margin-top:.7em;
+  margin-bottom:0;
+}
+h2:first-child,
+h1:first-child,
+h1:first-child + h2,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child
+{
+  margin-top: 0;
+  padding-top: 0;
+}
+body > h2:first-child,
+body > h1:first-child,
+body > h1:first-child + h2,
+body > h3:first-child,
+body > h4:first-child,
+body > h5:first-child,
+body > h6:first-child
+{
+  margin-top: 0;
+  padding-top: 0;
+}
+h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+  margin-top: 0;
+}
+h4 + pre {
+  margin-top: .1em;
+}
+strong {
+  color:#1C2025;
+}
+a:not([href]) {
+  color:inherit;
+  text-decoration:none;
+}
+a {
+  color:#0969da;
+  text-decoration:none;
+}
+a:hover {
+  text-decoration:underline;
+}
+img {
+  max-width:100%;
+}
+body>p {
+  margin-top:0;
+  margin-bottom:16px;
+  word-wrap:break-word;
+}
+body>ul,
+body>ol {
+  margin-bottom:16px;
+}
+ul,
+ol {
+  padding-left:32px;
+}
+ul.no-list,
+ol.no-list {
+  padding:0;
+  list-style-type:none;
+}
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin-top:0;
+  margin-bottom:0;
+}
+li {
+  margin-bottom:0;
+}
+li > p {
+  margin-top:0;
+  margin-bottom:0;
+}
+li > p + pre {
+  margin-top:.5em;
+}
+blockquote {
+  margin:16px 0;
+  font-size:inherit;
+  padding:5px 15px;
+  color:#57606a;
+  background-color:#EDEFF3;
+  border-left:4px solid #d0d7de;
+  border-radius:0 4px 4px 0;
+}
+blockquote strong {
+  color:#57606a;
+}
+blockquote>:first-child {
+  margin-top:0;
+}
+blockquote>:last-child {
+  margin-bottom:0;
+}
+hr {
+  height:3px;
+  margin:32px 0;
+  background-color:#d0d7de;
+  border:0 none;
+}
+table {
+  margin:10px 0 15px 0;
+  font-size:12pt;
+  border-collapse:collapse;
+  border-spacing:0;
+  display:block;
+  overflow:auto;
+  word-break:normal;
+  word-break:keep-all;
+}
+table th {
+  font-weight:bold;
+  font-size:.9em;
+  color:#1C2025;
+  background-color:#EDEFF3;
+}
+table td,
+table th {
+  border:1px solid #d0d7de;
+  padding:6px 13px;
+}
+table td code {
+  font-size:.9em;
+}
+dl {
+  padding:0;
+}
+dl dt {
+  padding:0;
+  margin-top:16px;
+  font-size:1em;
+  font-style:italic;
+  font-weight:bold;
+}
+dl dd {
+  padding:0 16px;
+  margin-bottom:16px;
+}
+code {
+  font-family:Consolas,'Liberation Mono',Menlo,'Courier New',monospace;
+  font-size:.9em;
+  color:#1C2025;
+  background-color:#D8DEE4;
+  border-radius:3px;
+  padding:.15em .1em;
+}
+code::before,
+code::after {
+  letter-spacing:-0.2em;
+  content:"\00a0";
+}
+pre>code {
+  padding:0;
+  margin:0;
+  font-size:.85em !important;
+  word-break:normal;
+  white-space:pre;
+  background-color:transparent;
+  border:0;
+}
+pre code,
+pre tt {
+  display:inline;
+  max-width:initial;
+  padding:0;
+  margin:0;
+  overflow:initial;
+  line-height:inherit;
+  word-wrap:normal;
+  background-color:transparent;
+  border:0;
+}
+pre code:before,
+pre tt:before,
+pre code:after,
+pre tt:after {
+  content:normal;
+}
+h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
+  background-color:#E1E4E9;
+  font-weight:normal;
+}
+h2 code {
+  padding-top:.1em;
+  padding-bottom:.23em;
+  border-bottom:1px solid #D9E1E8;
+  border-radius:3px 3px 0 0;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+pre {
+  margin-top:0;
+  margin-bottom:16px;
+}
+/* Code blocks */
+pre {
+  background-color:#f6f8fa;
+  line-height:1.4;
+  padding:1.2em;
+  border:1px solid #E2E4E6;
+  border-radius:6px;
+  overflow:auto;
+  word-wrap: normal;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+}
+kbd {
+  color:#24292f;
+  background-color:#f6f8fa;
+  font-size:.9em;
+  padding:2px 4px;
+  border:1px solid #AFB8C1;
+  border-bottom:2px solid #AFB8C1;
+  border-radius:3px;
+  box-shadow: inset 0 -1px 0 #AFB8C1;
+}
+
+/****************** EXTENSIONS ******************/
+
+.footnotes {
+  font-size: .75em;
+  color: #57606a;
+}
+.footnotes hr {
+  height:1px;
+  background-color:#d0d7de;
+}
+del {
+  color:#57606a;
+}
+mark {
+  color:#24292f;
+  background-color:#fff8c5;
+  padding:.1em .1em;
+}
+
+/******************   DOUBTS   ******************/
+/*
+code, pre {
+  -o-tab-size: 8;
+  tab-size: 8;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+// Inline code
+:not(pre) > code {
+  padding: .1em;
+  white-space: normal;
+}
+*/

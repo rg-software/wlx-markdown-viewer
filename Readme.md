@@ -1,8 +1,8 @@
 # WLX Markdown Viewer
 
-Markdown lister plugin for Total Commander (32/64-bit version)
+HTML + Markdown lister plugin for Total Commander (32/64-bit version)
 
-The plugin is based on [HTMLView 1.2.6 source](http://sites.google.com/site/htmlview/). It converts markdown files into HTML, then invokes HTMLView to display the resulting document. The processing is performed via [hoedown library](https://github.com/hoedown/hoedown). All operations are done in memory without any temporary files. External resources such as images (specified with relative links) are supported. The plugin should work reliably for UTF-8 and UTF-16 encoded files. For other formats, Internet Explorer-based autodetection is used, so results may vary. File format is detected with [text-encoding-detect library](https://github.com/AutoItConsulting/text-encoding-detect).
+Based on [HTMLView 1.2.6 source](http://sites.google.com/site/htmlview/), this plugin supports the original HTMLView functionality and displays Markdown files via [hoedown](https://github.com/hoedown/hoedown). Markdown rendering should work reliably for UTF-8 and UTF-16 encoded files (file format is detected with [text-encoding-detect](https://github.com/AutoItConsulting/text-encoding-detect)). For other encodings, Internet Explorer-based autodetection is used, so results may vary.
 
 ## Fine Tuning
 
@@ -11,9 +11,13 @@ Plugin configuration is specified in `MarkdownView.ini`. Markdown-related settin
 * `MarkdownExtensions`: file extensions recognized by the plugin as markdown files.
 * `HoedownArgs`: custom arguments passed to the hoedown engine (control fine settings of markdown rendering).
 * `UseSmartypants`: controls whether `smartypants` should be invoked after processing.
-* `CustomCSS`: a path to a custom CSS file for customizing the resulting look of the document. A collection of four CSS files from [Markdown CSS](https://markdowncss.github.io/) is included into the package.
+* `CustomCSS`: a path to a CSS sheet for customizing the resulting look of the document. A collection of four sheets from [Markdown CSS](https://markdowncss.github.io/) and six Github-inspired sheets courtesy of S.&nbsp;Kuznetsov is included into the package.
 
 For more information on `hoedown` arguments and `smartypants` functionality, check [this quick reference](https://htmlpreview.github.io?https://raw.githubusercontent.com/rg-software/wlx-markdown-viewer/master/hoedown.html).
+
+## Internet Explorer Update
+
+The plugin is based on an obsolete Internet Explorer engine, which can be upgraded via [registry hacks](https://raw.githubusercontent.com/rg-software/wlx-markdown-viewer/master/ie_upgrade_registry.zip) (check [MSDN](https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/general-info/ee330730(v=vs.85)?redirectedfrom=MSDN#browser-emulation) for details.)
 
 ## Setup
 
@@ -21,4 +25,4 @@ The binary plugin archive comes with the setup script. Just enter the archive, a
 
 ## Development
 
-The current project file can be compiled with Visual Studio 2017. For the sake of Windows XP support, `141_xp` toolset is used (enable `Windows XP support for C++` option in the optional components of the `Desktop development with C++` workload to install it). Note that `/Zc:threadSafeInit-` compiler switch is needed for Windows XP only, so we can remove it in the future.
+The current project file can be compiled with Visual Studio 2022. For the sake of Windows XP support, `141_xp` toolset is used (enable `Windows XP support for C++` option in the optional components of the `Desktop development with C++` workload to install it). Note that `/Zc:threadSafeInit-` compiler switch is needed for Windows XP.

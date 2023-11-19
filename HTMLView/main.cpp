@@ -50,6 +50,7 @@ CSmallStringList typing_trans_hotkeys;
 char hoedown_args[512];
 char smartypants_args[512];
 char html_template[512];
+char html_template_dark[512];
 
 void RefreshBrowser();
 
@@ -109,6 +110,7 @@ void InitProc()
 	GetPrivateProfileString("Renderer", "HoedownArgs", "", &hoedown_args[0], 512, options.IniFileName);
 	GetPrivateProfileString("Renderer", "UseSmartyPants", "", &smartypants_args[0], 512, options.IniFileName);
 	GetPrivateProfileString("Renderer", "CustomCSS", "", &html_template[0], 512, options.IniFileName);
+	GetPrivateProfileString("Renderer", "CustomCSSDark", "", &html_template_dark[0], 512, options.IniFileName);
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -403,7 +405,7 @@ std::string read_file(const char* FileToLoad)
 	return std::string(buffer.begin(), buffer.end());
 }
 
-void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
+void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad, bool use_dark)
 {
 	std::string utf8_text = read_file(FileToLoad);
 	INPUT_STRING = utf8_text.c_str();
@@ -438,6 +440,7 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
 	CHAR file_path[MAX_PATH];
 	CHAR file_url[MAX_PATH];
 	DWORD path_len = MAX_PATH;
+	const char* css_ptr = use_dark ? html_template_dark : html_template;
 	strcpy(file_path, FileToLoad);
 	PathRemoveFileSpec(file_path);	// no file name, no trailing slash
 	UrlCreateFromPath(file_path, file_url, &path_len, NULL);
@@ -448,7 +451,7 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad)
 	GetModuleFileName(hinst, path, MAX_PATH);
 	PathRemoveFileSpec(path);
 	strcat(path, "\\");
-	strcat(path, html_template);
+	strcat(path, css_ptr);
 
 	std::string css(read_file(path));
 	std::string result = "<HTML><HEAD>" + meta + "<base href=\"" +
@@ -488,7 +491,7 @@ int __stdcall ListLoadNext(HWND ParentWin, HWND PluginWin, char* FileToLoad, int
 	StoreRefreshParams(FileToLoad, ParentWin, ShowFlags);
 	
 	if (is_markdown(FileToLoad))
-		browser_show_file(browser_host, FileToLoad);
+		browser_show_file(browser_host, FileToLoad, ShowFlags & lcp_darkmode);
 	else
 		browser_host->mWebBrowser->Navigate(url, NULL, NULL, NULL, NULL);
 
@@ -542,7 +545,7 @@ HWND __stdcall ListLoad(HWND ParentWin, char* FileToLoad, int ShowFlags)
 	StoreRefreshParams(FileToLoad, ParentWin, ShowFlags);
 
 	if(is_markdown(FileToLoad))
-		browser_show_file(browser_host, FileToLoad);
+		browser_show_file(browser_host, FileToLoad, ShowFlags & lcp_darkmode);
 	else
 		browser_host->mWebBrowser->Navigate(url, NULL, NULL, NULL, NULL);
 	

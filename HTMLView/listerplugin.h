@@ -8,6 +8,8 @@
 #define lcp_ansi		4
 #define lcp_ascii		8
 #define lcp_variable	12
+#define lcp_darkmode    128
+
 
 #define lcs_findfirst	1
 #define lcs_matchcase	2

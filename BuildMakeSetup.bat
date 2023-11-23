@@ -13,6 +13,8 @@ rmdir /S /Q ReleaseWLX
 mkdir ReleaseWLX
 mkdir ReleaseWLX\css
 
+copy Readme.md ReleaseWLX\
+copy hoedown.html ReleaseWLX\
 copy Build\*.ini ReleaseWLX\
 copy Build\*.wlx? ReleaseWLX\
 copy Build\*.inf ReleaseWLX\

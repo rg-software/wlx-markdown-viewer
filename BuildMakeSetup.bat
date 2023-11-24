@@ -12,14 +12,15 @@ msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=x64;UseEnv=t
 rmdir /S /Q ReleaseWLX
 mkdir ReleaseWLX
 mkdir ReleaseWLX\css
+mkdir ReleaseWLX\doc
 
-copy Readme.md ReleaseWLX\
-copy hoedown.html ReleaseWLX\
+copy Readme.md ReleaseWLX\doc\
+copy hoedown.html ReleaseWLX\doc\
 copy Build\*.ini ReleaseWLX\
 copy Build\*.wlx? ReleaseWLX\
 copy Build\*.inf ReleaseWLX\
 copy Build\*.md ReleaseWLX\
 copy Build\css\*.* ReleaseWLX\css\
 
-del /Q Release*.zip
+del /Q Release-*.zip
 powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('ReleaseWLX', 'Release-' + (get-date -Format yyyyMMdd) +'.zip'); }"

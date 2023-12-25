@@ -25,4 +25,4 @@ The binary plugin archive comes with the setup script. Just enter the archive, a
 
 ## Development
 
-The current project file can be compiled with Visual Studio 2022. For the sake of Windows XP support, `141_xp` toolset is used (enable `Windows XP support for C++` option in the optional components of the `Desktop development with C++` workload to install it). Note that `/Zc:threadSafeInit-` compiler switch is needed for Windows XP.
+The current project file can be compiled with Visual Studio 2022. However, if Windows XP support is needed, Visual Studio 2019 version 16.7 or earlier [must be used](https://learn.microsoft.com/en-us/cpp/build/configuring-programs-for-windows-xp?view=msvc-170#windows-xp-deployment). In any case, the code is currently compiled with `141_xp` toolset (enable `Windows XP support for C++` option in the optional components of the `Desktop development with C++` workload to install it). Note that `/Zc:threadSafeInit-` compiler switch is needed for Windows XP.

@@ -19,7 +19,6 @@ copy hoedown.html ReleaseWLX\doc\
 copy Build\*.ini ReleaseWLX\
 copy Build\*.wlx? ReleaseWLX\
 copy Build\*.inf ReleaseWLX\
-copy Build\*.md ReleaseWLX\
 copy Build\css\*.* ReleaseWLX\css\
 
 del /Q Release-*.zip

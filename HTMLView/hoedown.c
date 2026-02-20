@@ -53,6 +53,7 @@ static struct extension_info extensions_info[] = {
 	{HOEDOWN_EXT_NO_INTRA_EMPHASIS, "disable-intra-emphasis", "Disable emphasis_between_words."},
 	{HOEDOWN_EXT_SPACE_HEADERS, "space-headers", "Require a space after '#' in headers."},
 	{HOEDOWN_EXT_MATH_EXPLICIT, "math-explicit", "Instead of guessing by context, parse $inline math$ and $$always block math$$ (requires --math)."},
+	{HOEDOWN_EXT_LITERAL_UNDERSCORE_ASTERISK, "literal-underscore-asterisk", "Treat _ and * as literal when within words (enabled by default, use --no-literal-underscore-asterisk to disable)."},
 
 	{HOEDOWN_EXT_DISABLE_INDENTED_CODE, "disable-indented-code", "Don't parse indented code blocks."},
 };
@@ -379,7 +380,7 @@ hoedown_main(int argc, const char **argv)
 	data.renderer = RENDERER_HTML;
 	data.toc_level = 0;
 	data.html_flags = 0;
-	data.extensions = 0;
+	data.extensions = HOEDOWN_EXT_LITERAL_UNDERSCORE_ASTERISK;  /* Enable by default */
 	data.max_nesting = DEF_MAX_NESTING;
 
 	argc = parse_options(argc, argv, parse_short_option, parse_long_option, parse_argument, &data);

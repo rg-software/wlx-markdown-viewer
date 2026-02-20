@@ -1,0 +1,62 @@
+# Build outputs (not Build/ itself - it contains tracked source assets)
+Win32/
+x64/
+Debug/
+Release/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vcxproj.filters.user
+
+# Build results (intermediate directories)
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Compiled files
+*.dll
+*.exe
+*.lib
+*.exp
+*.pdb
+*.ilk
+*.obj
+*.iobj
+*.ipdb
+*.idb
+*.res
+*.wlx
+*.wlx64
+
+# Intermediate files
+*.tlog
+*.lastbuildstate
+*.log
+*.cache
+
+# Hoedown build artifacts
+Hoedown/lib/*.lib
+Hoedown/bin/*.exe
+
+# Package files (keep source, ignore built packages)
+*.zip
+
+# Temporary files
+*.tmp
+*.temp
+~*
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store

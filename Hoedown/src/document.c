@@ -780,6 +780,19 @@ char_emphasis(hoedown_buffer *ob, hoedown_document *doc, uint8_t *data, size_t o
 	uint8_t c = data[0];
 	size_t ret;
 
+	/* Mid-word literal: treat _ and * as literal when alphanumeric on BOTH sides.
+	 * Can be disabled with HOEDOWN_EXT_NO_INTRA_EMPHASIS or --no-literal-underscore-asterisk. */
+	if ((c == '_' || c == '*') && !(doc->ext_flags & HOEDOWN_EXT_NO_INTRA_EMPHASIS)) {
+		if (offset > 0 && size > 1) {
+			int prev_alnum = isalnum((unsigned char)data[-1]);
+			int next_alnum = isalnum((unsigned char)data[1]);
+			if (prev_alnum && next_alnum) {
+				hoedown_buffer_putc(ob, c);
+				return 1;
+			}
+		}
+	}
+
 	if (doc->ext_flags & HOEDOWN_EXT_NO_INTRA_EMPHASIS) {
 		if (offset > 0 && !_isspace(data[-1]) && data[-1] != '>' && data[-1] != '(')
 			return 0;

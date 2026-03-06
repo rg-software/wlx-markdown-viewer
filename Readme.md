@@ -2,7 +2,9 @@
 
 HTML + Markdown lister plugin for Total Commander (32/64-bit version)
 
-Based on [HTMLView 1.2.6 source](http://sites.google.com/site/htmlview/), this plugin supports the original HTMLView functionality and displays Markdown files via [hoedown](https://github.com/hoedown/hoedown). Markdown rendering should work reliably for UTF-8 and UTF-16 encoded files (file format is detected with [text-encoding-detect](https://github.com/AutoItConsulting/text-encoding-detect)). For other encodings, Internet Explorer-based autodetection is used, so results may vary.
+Based on [HTMLView 1.2.6 source](https://web.archive.org/web/20180412091726/http://sites.google.com/site/htmlview/), this plugin supports the original HTMLView functionality and displays Markdown files via [hoedown](https://github.com/hoedown/hoedown). Markdown rendering should work reliably for UTF-8 and UTF-16 encoded files (file format is detected with [text-encoding-detect](https://github.com/AutoItConsulting/text-encoding-detect)). For other encodings, Internet Explorer-based autodetection is used, so results may vary.
+
+Please use this plugin only if you need a lightweight viewer or compatibility with legacy operating systems. More kinds of viewable content are supported by [EdgeViewer](https://github.com/rg-software/wlx-edge-viewer).
 
 ## Fine Tuning
 

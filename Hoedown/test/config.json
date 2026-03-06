@@ -120,6 +120,11 @@
             "input": "Tests/Images.text",
             "output": "Tests/Images.html",
             "flags": []
+        },
+        {
+            "input": "Tests/FencedAfterText.text",
+            "output": "Tests/FencedAfterText.html",
+            "flags": ["--fenced-code"]
         }
     ]
 }

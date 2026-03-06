@@ -1695,15 +1695,21 @@ parse_paragraph(hoedown_buffer *ob, hoedown_document *doc, uint8_t *data, size_t
 	while (i < size) {
 		for (end = i + 1; end < size && data[end - 1] != '\n'; end++) /* empty */;
 
-		if (is_empty(data + i, size - i))
-			break;
+        if (is_empty(data + i, size - i))
+            break;
 
-		if ((level = is_headerline(data + i, size - i)) != 0)
-			break;
+        if ((level = is_headerline(data + i, size - i)) != 0)
+            break;
 
-		if (is_atxheader(doc, data + i, size - i) ||
-			is_hrule(data + i, size - i) ||
-			prefix_quote(data + i, size - i)) {
+        if ((doc->ext_flags & HOEDOWN_EXT_FENCED_CODE) != 0) {
+            hoedown_buffer fence_lang = { NULL, 0, 0, 0, NULL, NULL, NULL };
+            if (parse_codefence(data + i, size - i, &fence_lang, NULL, NULL))
+                break;
+        }
+
+        if (is_atxheader(doc, data + i, size - i) ||
+            is_hrule(data + i, size - i) ||
+            prefix_quote(data + i, size - i)) {
 			end = i;
 			break;
 		}

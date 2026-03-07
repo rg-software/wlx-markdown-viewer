@@ -1482,8 +1482,9 @@ static size_t
 parse_codefence(uint8_t *data, size_t size, hoedown_buffer *lang, size_t *width, uint8_t *chr)
 {
 	size_t i, w, lang_start;
+	uint8_t local_chr = 0;
 
-	i = w = is_codefence(data, size, width, chr);
+	i = w = is_codefence(data, size, width, chr ? chr : &local_chr);
 	if (i == 0)
 		return 0;
 
@@ -1498,10 +1499,21 @@ parse_codefence(uint8_t *data, size_t size, hoedown_buffer *lang, size_t *width,
 	lang->data = data + lang_start;
 	lang->size = i - lang_start;
 
-	/* Avoid parsing a codespan as a fence */
-	i = lang_start + 2;
-	while (i < size && !(data[i] == *chr && data[i-1] == *chr && data[i-2] == *chr)) i++;
-	if (i < size) return 0;
+	/* Avoid parsing a codespan as a fence: only check current line */
+	{
+		uint8_t fence_chr = chr ? *chr : local_chr;
+		size_t line_end = lang_start;
+		while (line_end < size && data[line_end] != '\n')
+			line_end++;
+		if (lang_start + 2 < line_end) {
+			const uint8_t *scan = data + lang_start;
+			const uint8_t *end_ptr = data + line_end;
+			for (; scan + 2 < end_ptr; ++scan) {
+				if (scan[0] == fence_chr && scan[1] == fence_chr && scan[2] == fence_chr)
+					return 0;
+			}
+		}
+	}
 
 	return w;
 }
@@ -1716,8 +1728,10 @@ parse_paragraph(hoedown_buffer *ob, hoedown_document *doc, uint8_t *data, size_t
 
         if ((doc->ext_flags & HOEDOWN_EXT_FENCED_CODE) != 0) {
             hoedown_buffer fence_lang = { NULL, 0, 0, 0, NULL, NULL, NULL };
-            if (parse_codefence(data + i, size - i, &fence_lang, NULL, NULL))
+            if (parse_codefence(data + i, size - i, &fence_lang, NULL, NULL)) {
+                end = i;
                 break;
+            }
         }
 
         if (is_atxheader(doc, data + i, size - i) ||

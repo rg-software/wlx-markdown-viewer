@@ -1,0 +1,33 @@
+<h1>Test: Literal Underscore and Asterisk</h1>
+
+<p>Mid-word <code>_</code> and <code>*</code> are always treated as literal characters (no flag needed).</p>
+
+<h2>Renders as literal (mid-word, alphanumeric on both sides)</h2>
+
+<ul>
+<li>file_name stays as file_name</li>
+<li>my_variable_name stays as my_variable_name</li>
+<li>test_function_2 stays as test_function_2</li>
+<li>2*3 stays as 2*3</li>
+<li>a*b*c stays as a*b*c</li>
+</ul>
+
+<h2>Emphasis still works when intended</h2>
+
+<ul>
+<li><em>this is italic</em></li>
+<li><strong>this is bold</strong></li>
+<li><em>this is also italic</em></li>
+<li><strong>this is also bold</strong></li>
+<li>This <em>word</em> is emphasized</li>
+<li>This <em>word</em> is also emphasized</li>
+</ul>
+
+<h2>Edge cases (should still trigger emphasis)</h2>
+
+<ul>
+<li><em>leading underscore becomes italic</em></li>
+<li><em>leading asterisk becomes italic</em></li>
+<li>Multiple * asterisks * spaced * out</li>
+<li>Multiple _ underscores _ spaced _ out</li>
+</ul>

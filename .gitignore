@@ -3,6 +3,7 @@ Win32/
 x64/
 Debug/
 Release/
+ReleaseWLX/
 
 # Visual Studio
 .vs/

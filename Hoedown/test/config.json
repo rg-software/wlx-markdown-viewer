@@ -107,6 +107,31 @@
             "flags": ["--math"]
         },
         {
+            "input": "Tests/Strikethrough.text",
+            "output": "Tests/Strikethrough.html",
+            "flags": ["--strikethrough"]
+        },
+        {
+            "input": "Tests/Highlight.text",
+            "output": "Tests/Highlight.html",
+            "flags": ["--highlight"]
+        },
+        {
+            "input": "Tests/Superscript.text",
+            "output": "Tests/Superscript.html",
+            "flags": ["--superscript"]
+        },
+        {
+            "input": "Tests/HardWrap.text",
+            "output": "Tests/HardWrap.html",
+            "flags": ["--hard-wrap"]
+        },
+        {
+            "input": "Tests/LiteralUnderscoreAsterisk.text",
+            "output": "Tests/LiteralUnderscoreAsterisk.html",
+            "flags": []
+        },
+        {
             "input": "Tests/Underline.text",
             "output": "Tests/Underline.html",
             "flags": ["--underline"]

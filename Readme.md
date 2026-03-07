@@ -28,3 +28,11 @@ The binary plugin archive comes with the setup script. Just enter the archive, a
 ## Development
 
 Currently, the project is compiled with Visual Studio 2022. However, if Windows XP support is needed, it should be technically possible to modify project files to use [Visual Studio 2019 version 16.7 or earlier](https://learn.microsoft.com/en-us/cpp/build/configuring-programs-for-windows-xp?view=msvc-170#windows-xp-deployment) with the `141_xp` toolset. Project binaries up to [v2.5](https://github.com/rg-software/wlx-markdown-viewer/releases/tag/2.5) are compatible with Windows XP.
+
+To run tests, execute
+
+```shell
+python Hoedown/test/runner.py
+```
+
+You need to have [tidy](https://binaries.html-tidy.org) installed.

@@ -7,12 +7,43 @@ import os
 import re
 import subprocess
 import unittest
+from pathlib import Path
+import shutil
 
 TEST_ROOT = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.dirname(TEST_ROOT)
-HOEDOWN = [os.path.abspath(os.path.join(PROJECT_ROOT, 'hoedown'))]
-TIDY = ['tidy', '--show-body-only', '1', '--show-warnings', '0',
-        '--quiet', '1']
+
+
+def _find_hoedown_executable():
+    """Return the preferred hoedown executable path, raising if missing."""
+    candidates = [
+        Path(PROJECT_ROOT) / 'hoedown',  # Unix-style build
+        Path(PROJECT_ROOT) / 'hoedown.exe',
+        Path(PROJECT_ROOT).parent / 'x64' / 'Release' / 'hoedown.exe',
+        Path(PROJECT_ROOT).parent / 'x64' / 'Debug' / 'hoedown.exe',
+        Path(PROJECT_ROOT).parent / 'Win32' / 'Release' / 'hoedown.exe',
+        Path(PROJECT_ROOT).parent / 'Win32' / 'Debug' / 'hoedown.exe',
+    ]
+
+    for path in candidates:
+        if path and path.exists():
+            return [str(path.resolve())]
+
+    raise FileNotFoundError(
+        'Unable to locate hoedown executable. Build the project first or '
+        'place hoedown(.exe) in the Hoedown directory or in a Release/Debug folder.'
+    )
+
+
+def _build_tidy_command():
+    tidy_path = shutil.which('tidy')
+    if not tidy_path:
+        return None
+    return [tidy_path, '--show-body-only', '1', '--show-warnings', '0', '--quiet', '1']
+
+
+HOEDOWN = _find_hoedown_executable()
+TIDY = _build_tidy_command()
 CONFIG_PATH = os.path.join(TEST_ROOT, 'config.json')
 SLUGIFY_PATTERN = re.compile(r'\W')
 
@@ -31,6 +62,10 @@ def with_metaclass(meta, *bases):
 class TestFailed(AssertionError):
     def __init__(self, name, expected, got):
         super(TestFailed, self).__init__(self)
+        if isinstance(expected, bytes):
+            expected = expected.decode('utf-8')
+        if isinstance(got, bytes):
+            got = got.decode('utf-8')
         diff = difflib.unified_diff(
             expected.splitlines(), got.splitlines(),
             fromfile='Expected', tofile='Got',
@@ -43,6 +78,32 @@ class TestFailed(AssertionError):
         return self.description
 
 
+def _tidy_bytes(data):
+    if TIDY is None:
+        return data.strip()
+
+    tidy_proc = subprocess.Popen(
+        TIDY,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+    )
+    tidy_output, _ = tidy_proc.communicate(input=data)
+    return tidy_output.strip()
+
+
+def _tidy_file(file_path):
+    if TIDY is None:
+        with open(file_path, 'rb') as fh:
+            return fh.read().strip()
+
+    tidy_proc = subprocess.Popen(
+        TIDY + [file_path],
+        stdout=subprocess.PIPE,
+    )
+    tidy_output, _ = tidy_proc.communicate()
+    return tidy_output.strip()
+
+
 def _test_func(test_case):
     flags = test_case.get('flags') or []
     hoedown_proc = subprocess.Popen(
@@ -51,21 +112,11 @@ def _test_func(test_case):
     )
     stdoutdata = hoedown_proc.communicate()[0]
 
-    got_tidy_proc = subprocess.Popen(
-        TIDY, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-    )
-    got = got_tidy_proc.communicate(input=stdoutdata)[0].strip()
-
-    expected_tidy_proc = subprocess.Popen(
-        TIDY + [os.path.join(TEST_ROOT, test_case['output'])],
-        stdout=subprocess.PIPE,
-    )
-    expected = expected_tidy_proc.communicate()[0].strip()
+    got = _tidy_bytes(stdoutdata)
+    expected = _tidy_file(os.path.join(TEST_ROOT, test_case['output']))
 
     # Cleanup.
     hoedown_proc.stdout.close()
-    got_tidy_proc.stdout.close()
-    expected_tidy_proc.stdout.close()
 
     try:
         assert expected == got

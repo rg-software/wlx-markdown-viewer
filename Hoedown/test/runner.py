@@ -25,13 +25,30 @@ def _find_hoedown_executable():
         Path(PROJECT_ROOT).parent / 'Win32' / 'Debug' / 'hoedown.exe',
     ]
 
+    tried = []
+
     for path in candidates:
-        if path and path.exists():
-            return [str(path.resolve())]
+        if not path:
+            continue
+
+        if not path.exists():
+            tried.append(f"{path} (missing)")
+            continue
+
+        if path.is_dir():
+            tried.append(f"{path} (directory)")
+            continue
+
+        if not os.access(path, os.X_OK):
+            tried.append(f"{path} (not executable)")
+            continue
+
+        return [str(path.resolve())]
 
     raise FileNotFoundError(
         'Unable to locate hoedown executable. Build the project first or '
-        'place hoedown(.exe) in the Hoedown directory or in a Release/Debug folder.'
+        'place hoedown(.exe) in the Hoedown directory or in a Release/Debug folder. '
+        'Tried paths: ' + ', '.join(tried)
     )
 
 

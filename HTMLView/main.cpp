@@ -516,8 +516,36 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad, bool 
 	free(SP_OUTPUT_STRING);
 }
 
+bool is_binary_file(const char* FileToLoad)
+{
+	FILE* f = fopen(FileToLoad, "rb");
+	if (!f)
+		return false;
+	unsigned char buf[8192];
+	size_t n = fread(buf, 1, sizeof(buf), f);
+	fclose(f);
+	if (n == 0)
+		return false;
+
+	TextEncodingDetect::Encoding e =
+		TextEncodingDetect().DetectEncoding(buf, (int)n);
+	if (e == TextEncodingDetect::UTF16_LE_BOM ||
+		e == TextEncodingDetect::UTF16_LE_NOBOM ||
+		e == TextEncodingDetect::UTF16_BE_BOM ||
+		e == TextEncodingDetect::UTF16_BE_NOBOM)
+		return false; // UTF-16 text, not binary
+
+	for (size_t i = 0; i < n; ++i)
+		if (buf[i] == 0)
+			return true;
+	return false;
+}
+
 bool is_markdown(const char* FileToLoad)
 {
+	if (is_binary_file(FileToLoad))
+		return false;
+
 	CAtlString url;
 	char ext[MAX_PATH];
 	_splitpath(FileToLoad, NULL, NULL, NULL, ext);

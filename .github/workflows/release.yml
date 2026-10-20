@@ -16,13 +16,17 @@ jobs:
 
       - uses: microsoft/setup-msbuild@v2
 
+      - name: List Windows SDKs
+        shell: pwsh
+        run: Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\Include" -ErrorAction SilentlyContinue
+
       - name: Build Release (Win32)
         shell: cmd
-        run: msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=Win32;UseEnv=true
+        run: msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=Win32
 
       - name: Build Release (x64)
         shell: cmd
-        run: msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=x64;UseEnv=true
+        run: msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=x64
 
       - name: Package
         shell: pwsh

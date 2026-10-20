@@ -1,6 +1,7 @@
 #ifndef E_BOUNDS
 #define E_BOUNDS                         _HRESULT_TYPEDEF_(0x8000000BL)
 #endif
+#define NOMINMAX
 
 #include <direct.h>
 #include <windows.h>
@@ -408,6 +409,45 @@ std::string read_file(const char* FileToLoad)
 void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad, bool use_dark)
 {
 	std::string utf8_text = read_file(FileToLoad);
+
+	// Strip an optional YAML frontmatter block (must start at the very
+	// beginning of the file), matching the edge viewer's handling.
+	{
+		const bool has_bom = utf8_text.size() >= 3 &&
+			utf8_text.compare(0, 3, "\xEF\xBB\xBF") == 0;
+		size_t start = has_bom ? 3 : 0;
+		// Opening delimiter must be "---" followed by a newline.
+		bool has_open = false;
+		if (utf8_text.compare(start, 4, "---\n") == 0)
+			has_open = true;
+		else if (utf8_text.compare(start, 5, "---\r\n") == 0)
+			has_open = true;
+
+		if (has_open)
+		{
+			size_t content_start = (utf8_text.compare(start, 4, "---\n") == 0)
+				? start + 4 : start + 5;
+			// Search for the closing delimiter at the start of a line.
+			size_t search_from = (content_start > 0) ? content_start - 1 : 0;
+			size_t nl = utf8_text.find("\n---", search_from);
+			if (nl != std::string::npos)
+			{
+				size_t after = nl + 4; // position after "\n---"
+				size_t end = after;
+				if (end < utf8_text.size() && utf8_text[end] == '\r')
+					end++;
+				if (end == utf8_text.size() ||
+					(end < utf8_text.size() && utf8_text[end] == '\n'))
+				{
+					if (end < utf8_text.size())
+						end++; // include the trailing newline
+					std::string body = utf8_text.substr(end);
+					utf8_text = has_bom ? (std::string("\xEF\xBB\xBF") + body) : body;
+				}
+			}
+		}
+	}
+
 	INPUT_STRING = utf8_text.c_str();
 
 	// we have converted everything to utf8 (but the detector can still return None or ANSI)

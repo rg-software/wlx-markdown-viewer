@@ -3,15 +3,18 @@ name: Release
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
+
+      - uses: microsoft/setup-msbuild@v2
 
       - name: Build Release (Win32)
         shell: cmd
@@ -91,11 +94,11 @@ jobs:
         run: |
           TAG="${{ github.ref_name }}"
           cd artifacts/windows-binaries
-          zip -r ../wlx-markdown-viewer-${TAG}-Windows.zip .
+          zip -r ../wlx-markdown-viewer-${TAG}.zip .
 
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           body_path: notes.md
           files: |
-            artifacts/wlx-markdown-viewer-${{ github.ref_name }}-Windows.zip
+            artifacts/wlx-markdown-viewer-${{ github.ref_name }}.zip

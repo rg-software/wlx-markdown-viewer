@@ -535,10 +535,7 @@ bool is_binary_file(const char* FileToLoad)
 		e == TextEncodingDetect::UTF16_BE_NOBOM)
 		return false; // UTF-16 text, not binary
 
-	for (size_t i = 0; i < n; ++i)
-		if (buf[i] == 0)
-			return true;
-	return false;
+	return memchr(buf, 0, n) != nullptr;
 }
 
 bool is_markdown(const char* FileToLoad)

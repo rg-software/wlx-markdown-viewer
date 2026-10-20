@@ -18,7 +18,7 @@ mkdir ReleaseWLX\doc
 
 copy Readme.md ReleaseWLX\doc\
 copy hoedown.html ReleaseWLX\doc\
-copy Build\*.ini ReleaseWLX\
+copy Build\MarkdownView.ini ReleaseWLX\MarkdownView.ini.sample
 copy Build\*.wlx? ReleaseWLX\
 copy Build\*.inf ReleaseWLX\
 copy Build\css\*.* ReleaseWLX\css\

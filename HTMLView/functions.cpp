@@ -157,6 +157,19 @@ void InitOptions()
 	BOOL ini_exists = PathFileExists(options.IniFileName);
 	if(!ini_exists)
 	{
+		// First run after install/update: create the INI from the shipped
+		// template so user customizations are not overwritten on update.
+		char sample_file_name[MAX_PATH];
+		strcpy(sample_file_name, options.IniFileName);
+		strcat(sample_file_name, ".sample");
+		if(PathFileExists(sample_file_name))
+		{
+			CopyFile(sample_file_name, options.IniFileName, FALSE);
+			ini_exists = PathFileExists(options.IniFileName);
+		}
+	}
+	if(!ini_exists)
+	{
 		CAtlString message = "File not found: ";
 		message += options.IniFileName;
 		MessageBox(NULL, message, "HTMLView", MB_OK|MB_ICONWARNING);

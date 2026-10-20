@@ -30,7 +30,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path ReleaseWLX\doc | Out-Null
           Copy-Item Readme.md ReleaseWLX\doc\
           Copy-Item hoedown.html ReleaseWLX\doc\
-          Copy-Item Build\*.ini ReleaseWLX\
+          Copy-Item Build\MarkdownView.ini ReleaseWLX\MarkdownView.ini.sample
           Copy-Item Build\*.wlx ReleaseWLX\ -ErrorAction SilentlyContinue
           Copy-Item Build\*.wlx64 ReleaseWLX\ -ErrorAction SilentlyContinue
           Copy-Item Build\*.inf ReleaseWLX\

@@ -437,13 +437,21 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad, bool 
 	else
 		smartypants_main_null(1, smartypants_argv);
 
-	CHAR file_path[MAX_PATH];
-	CHAR file_url[MAX_PATH];
-	DWORD path_len = MAX_PATH;
+	wchar_t file_path_w[MAX_PATH];
+	char file_url[8192];
 	const char* css_ptr = use_dark ? html_template_dark : html_template;
-	strcpy(file_path, FileToLoad);
-	PathRemoveFileSpec(file_path);	// no file name, no trailing slash
-	UrlCreateFromPath(file_path, file_url, &path_len, NULL);
+	MultiByteToWideChar(CP_ACP, 0, FileToLoad, -1, file_path_w, MAX_PATH);
+	PathRemoveFileSpecW(file_path_w);	// no file name, no trailing slash
+
+	wchar_t file_url_w[8192];
+	DWORD url_len = 8192;
+	UrlCreateFromPathW(file_path_w, file_url_w, &url_len, 0);
+
+	wchar_t file_url_esc[8192];
+	DWORD esc_len = 8192;
+	UrlEscapeW(file_url_w, file_url_esc, &esc_len, URL_ESCAPE_AS_UTF8);
+
+	WideCharToMultiByte(CP_UTF8, 0, file_url_esc, -1, file_url, sizeof(file_url), NULL, NULL);
 	strcat(file_url, "/");
 
 	// read HTML template

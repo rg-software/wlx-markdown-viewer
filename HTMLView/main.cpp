@@ -487,11 +487,11 @@ void browser_show_file(CBrowserHost* browser_host, const char* FileToLoad, bool 
 	DWORD url_len = 8192;
 	UrlCreateFromPathW(file_path_w, file_url_w, &url_len, 0);
 
-	wchar_t file_url_esc[8192];
-	DWORD esc_len = 8192;
-	UrlEscapeW(file_url_w, file_url_esc, &esc_len, URL_ESCAPE_AS_UTF8);
-
-	WideCharToMultiByte(CP_UTF8, 0, file_url_esc, -1, file_url, sizeof(file_url), NULL, NULL);
+	// Match the document encoding: UTF-8 content gets a UTF-8 URL,
+	// ANSI content keeps the system codepage (no percent-encoding).
+	int url_cp = (e == TextEncodingDetect::UTF8_BOM ||
+		e == TextEncodingDetect::UTF8_NOBOM) ? CP_UTF8 : CP_ACP;
+	WideCharToMultiByte(url_cp, 0, file_url_w, -1, file_url, sizeof(file_url), NULL, NULL);
 	strcat(file_url, "/");
 
 	// read HTML template

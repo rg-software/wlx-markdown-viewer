@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Release (Win32)
+        shell: cmd
+        run: msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=Win32;UseEnv=true
+
+      - name: Build Release (x64)
+        shell: cmd
+        run: msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=x64;UseEnv=true
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Remove-Item ReleaseWLX -Recurse -Force -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force -Path ReleaseWLX | Out-Null
+          New-Item -ItemType Directory -Force -Path ReleaseWLX\css | Out-Null
+          New-Item -ItemType Directory -Force -Path ReleaseWLX\doc | Out-Null
+          Copy-Item Readme.md ReleaseWLX\doc\
+          Copy-Item hoedown.html ReleaseWLX\doc\
+          Copy-Item Build\*.ini ReleaseWLX\
+          Copy-Item Build\*.wlx ReleaseWLX\ -ErrorAction SilentlyContinue
+          Copy-Item Build\*.wlx64 ReleaseWLX\ -ErrorAction SilentlyContinue
+          Copy-Item Build\*.inf ReleaseWLX\
+          Copy-Item Build\css\*.* ReleaseWLX\css\
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-binaries
+          path: ReleaseWLX/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Generate release notes
+        id: notes
+        shell: bash
+        run: |
+          CUR="$GITHUB_REF_NAME"
+          PREV="$(git describe --tags --abbrev=0 "$CUR"^ 2>/dev/null || true)"
+          if [ -n "$PREV" ]; then
+            LOG="$(git log --format=%s "$PREV..$CUR")"
+          else
+            LOG="$(git log --format=%s)"
+          fi
+
+          : > notes.md
+          if echo "$LOG" | grep -qiE '^feat(\(.*\))?:' ; then
+            echo '**New features**' >> notes.md
+            echo "$LOG" | grep -iE '^feat(\(.*\))?:' | sed 's/^/- /' >> notes.md
+            echo >> notes.md
+          fi
+          if echo "$LOG" | grep -qiE '^fix(\(.*\))?:' ; then
+            echo '**Bugfixes**' >> notes.md
+            echo "$LOG" | grep -iE '^fix(\(.*\))?:' | sed 's/^/- /' >> notes.md
+            echo >> notes.md
+          fi
+          if echo "$LOG" | grep -vqiE '^(feat|fix)(\(.*\))?:' ; then
+            echo '**Other Changes**' >> notes.md
+            echo "$LOG" | grep -viE '^(feat|fix)(\(.*\))?:' | sed 's/^/- /' >> notes.md
+          fi
+          if [ -n "$PREV" ]; then
+            echo >> notes.md
+            echo "Full Changelog: [$PREV...$CUR](https://github.com/${{ github.repository }}/compare/$PREV...$CUR)" >> notes.md
+          fi
+          sed -i '/./,$!d' notes.md
+
+      - name: Package release zip
+        run: |
+          TAG="${{ github.ref_name }}"
+          cd artifacts/windows-binaries
+          zip -r ../wlx-markdown-viewer-${TAG}-Windows.zip .
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: notes.md
+          files: |
+            artifacts/wlx-markdown-viewer-${{ github.ref_name }}-Windows.zip

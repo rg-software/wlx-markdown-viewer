@@ -1,0 +1,23 @@
+schema: spec-driven
+
+# Project context injected into every artifact's AI instructions.
+# Keep this small; details live in openspec/conventions.md and AGENTS.md.
+context: |
+  Total Commander WLX lister plugin (Windows 32/64-bit) rendering HTML and
+  Markdown via the Internet Explorer WebBrowser control; Markdown conversion
+  uses the vendored hoedown engine. MSVC C++ (v143), MultiByte, static CRT.
+  Single solution (MarkdownView.sln). No vcpkg or external package manager.
+  See openspec/conventions.md and AGENTS.md for full conventions.
+
+rules:
+  proposal:
+    - Name the concrete capabilities and affected files
+  specs:
+    - Reference the affected source files and/or Build/css paths
+    - Cover both 32- and 64-bit where behavior could differ
+  design:
+    - State whether changes belong in C/C++ (HTMLView/, Hoedown/) or in
+      static assets (Build/css/)
+    - Call out Build/MarkdownView.ini whenever configuration is involved
+  tasks:
+    - End with a verify step (build Release for both Win32 and x64)

@@ -14,15 +14,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: microsoft/setup-msbuild@v2
-
-      - name: List Windows SDKs
-        shell: pwsh
-        run: Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\Include" -ErrorAction SilentlyContinue
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
+          vsversion: "2022"
 
       - name: Build Release (Win32)
         shell: cmd
         run: msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=Win32
+
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+          vsversion: "2022"
 
       - name: Build Release (x64)
         shell: cmd

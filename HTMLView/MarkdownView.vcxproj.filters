@@ -27,6 +27,9 @@
     <ClCompile Include="functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ini_settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\ChmLib\lzx.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -56,6 +59,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ini_settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="listerplugin.h">

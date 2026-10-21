@@ -22,7 +22,7 @@ Canonical conventions for `wlx-markdown-viewer`. `AGENTS.md` holds the operation
 - TC WLX exports (`ListLoad`, `ListLoadNext`, `ListSearchText`/`W`, `ListPrint`, `ListCloseWindow`) live in `HTMLView/main.cpp`, exported via `HTMLView/htmlview.def`.
 - Markdown files are detected by extension from `MarkdownView.ini` (`[Extensions] MarkdownExtensions`); other supported types (HTML, CHM, signatures) go straight to the IE WebBrowser control.
 - Markdown rendering pipeline (`browser_show_file` in `HTMLView/main.cpp`): read file with encoding detection (text-encoding-detect), run `hoedown_main`, optionally run `smartypants`, inject configured CSS from `Build/css/`, load result into the WebBrowser control via a stream.
-- Plugin settings come from `MarkdownView.ini` (template in `Build/MarkdownView.ini`): `[Extensions]`, `[Renderer]` (HoedownArgs, UseSmartypants, CustomCSS/CustomCSSDark), hotkeys, toolbar/status bar options. Parsed with `GetPrivateProfile*` and `CSmallStringList` (`HTMLView/functions.*`).
+- Plugin settings come from `MarkdownView.ini` (template in `Build/MarkdownView.ini`): `[Extensions]`, `[Renderer]` (HoedownArgs, UseSmartypants, CustomCSS/CustomCSSDark), hotkeys, toolbar/status bar options. They are read through a layered lookup (`HTMLView/ini_settings.*`): the user's `MarkdownView.ini`, then the shipped `MarkdownView.ini.sample` from the same directory, then the hardcoded default from `HTMLView/settings_defaults.h` (which mirrors the active values of `Build/MarkdownView.ini`). Lists are parsed with `CSmallStringList` (`HTMLView/functions.*`).
 - Encoding detection: `TextEncodingDetect` plus `boost::nowide` for UTF-16 to UTF-8 conversion.
 
 ## Conventions
@@ -35,5 +35,6 @@ Canonical conventions for `wlx-markdown-viewer`. `AGENTS.md` holds the operation
 ## Verification
 
 - Build Release for both Win32 and x64 (`msbuild MarkdownView.sln /t:Build /p:Configuration=Release;Platform=Win32|x64;UseEnv=true`).
+- Configuration unit tests: `tests\run_tests.bat` (layered settings lookup, defaults vs. `Build/MarkdownView.ini`).
 - Manual load in Total Commander.
 - Hoedown rendering changes: `python Hoedown/test/runner.py` (requires `tidy`).

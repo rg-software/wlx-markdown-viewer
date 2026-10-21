@@ -4,6 +4,7 @@
 
 #include <mshtmdid.h>
 #include "functions.h"
+#include "settings_defaults.h"
 
 extern "C"
 {
@@ -46,10 +47,10 @@ bool CSmallStringList::valid()
 {
 	return data;
 }
-void CSmallStringList::load_from_ini(const char* filename, const char* section, const char* key)
+void CSmallStringList::load_from_ini(const char* filename, const char* section, const char* key, const char* hardcoded_default)
 {
 	char buffer[512];
-	GetPrivateProfileString(section, key, "", buffer+1, sizeof(buffer)-1, filename);
+	GetIniSettingString(filename, section, key, hardcoded_default, buffer+1, sizeof(buffer)-1);
 	strcat(buffer+1, ";");
 	char* next_pos;
 	char* str_pos = buffer;
@@ -64,11 +65,11 @@ void CSmallStringList::load_from_ini(const char* filename, const char* section, 
 	*str_pos = 0;
 	set_data((unsigned char*)buffer, str_pos-buffer+1);
 }
-void CSmallStringList::load_sign_from_ini(const char* filename, const char* section, const char* key)
+void CSmallStringList::load_sign_from_ini(const char* filename, const char* section, const char* key, const char* hardcoded_default)
 {
 	char buffer[512];
 	unsigned char list[512];
-	GetPrivateProfileString(section, key, "", buffer, sizeof(buffer), filename);
+	GetIniSettingString(filename, section, key, hardcoded_default, buffer, sizeof(buffer));
 	strcat(buffer, ";");
 	char* next_pos;
 	char* str_pos = buffer;
@@ -148,27 +149,41 @@ bool CSmallStringList::check_signature(const char* filename, bool skip_spaces)
 //							|		   |
 //							#----------#
 
+// Reads a setting through the three layers (user ini -> shipped sample ->
+// hardcoded default), see ini_settings.h.
+int GetSettingString(const char* section, const char* key, const char* hardcoded_default, char* buffer, int buffer_size)
+{
+	return GetIniSettingString(options.IniFileName, section, key, hardcoded_default, buffer, buffer_size);
+}
+
+int GetSettingInt(const char* section, const char* key, int hardcoded_default)
+{
+	return GetIniSettingInt(options.IniFileName, section, key, hardcoded_default);
+}
+
 void InitOptions()
 {
 	GetModuleFileName(hinst, options.IniFileName, sizeof(options.IniFileName));
 	char* dot = strrchr(options.IniFileName, '.');
 	strcpy(dot, ".ini");
 
+	// The shipped sample lives next to the plugin as "<ini file name>.sample".
+	char sample_file_name[sizeof(options.IniFileName)+sizeof(".sample")];
+	strcpy(sample_file_name, options.IniFileName);
+	strcat(sample_file_name, ".sample");
+	BOOL sample_exists = PathFileExists(sample_file_name);
+
 	BOOL ini_exists = PathFileExists(options.IniFileName);
-	if(!ini_exists)
+	if(!ini_exists && sample_exists)
 	{
 		// First run after install/update: create the INI from the shipped
 		// template so user customizations are not overwritten on update.
-		char sample_file_name[MAX_PATH];
-		strcpy(sample_file_name, options.IniFileName);
-		strcat(sample_file_name, ".sample");
-		if(PathFileExists(sample_file_name))
-		{
-			CopyFile(sample_file_name, options.IniFileName, FALSE);
-			ini_exists = PathFileExists(options.IniFileName);
-		}
+		// If the plugin directory is read-only the copy fails; the settings
+		// are then resolved through the shipped sample instead.
+		CopyFile(sample_file_name, options.IniFileName, FALSE);
+		ini_exists = PathFileExists(options.IniFileName);
 	}
-	if(!ini_exists)
+	if(!ini_exists && !sample_exists)
 	{
 		CAtlString message = "File not found: ";
 		message += options.IniFileName;
@@ -181,55 +196,55 @@ void InitOptions()
 
 	options.flags = 0;
 	char temp[10];
-	GetPrivateProfileString("options", "ListerTitle", "", (char*)temp, sizeof(temp), options.IniFileName);
+	GetSettingString("options", "ListerTitle", DEFAULT_LISTER_TITLE, temp, sizeof(temp));
 	if(temp[0])
 		options.flags |= OPT_TITLE;
-	//if(GetPrivateProfileInt("options", "ShowToolbar", 0, options.IniFileName))
+	//if(GetSettingInt("options", "ShowToolbar", DEFAULT_SHOW_TOOLBAR))
 	//	options.flags |= OPT_TOOLBAR;
-	//if(GetPrivateProfileInt("options", "UseDefaultBrowser", 0, options.IniFileName))
+	//if(GetSettingInt("options", "UseDefaultBrowser", 0))
 	//	options.flags |= OPT_DEFBROWSER;
-	//if(GetPrivateProfileInt("options", "StatusBarInQuickView", 0, options.IniFileName))
+	//if(GetSettingInt("options", "StatusBarInQuickView", 0))
 	//	options.flags |= OPT_STATUS_QV;
-	if(GetPrivateProfileInt("options", "UseSavePosition", 0, options.IniFileName))
+	if(GetSettingInt("options", "UseSavePosition", DEFAULT_USE_SAVE_POSITION))
 		options.flags |= OPT_SAVEPOS;
-	if(GetPrivateProfileInt("options", "AllowPopups", 0, options.IniFileName))
+	if(GetSettingInt("options", "AllowPopups", DEFAULT_ALLOW_POPUPS))
 		options.flags |= OPT_POPUPS;
-	if(GetPrivateProfileInt("options", "ShowDirs", 0, options.IniFileName))
+	if(GetSettingInt("options", "ShowDirs", DEFAULT_SHOW_DIRS))
 		options.flags |= OPT_DIRS;
-	if(GetPrivateProfileInt("Debug", "UseMozillaControl", 0, options.IniFileName))
+	if(GetSettingInt("Debug", "UseMozillaControl", DEFAULT_USE_MOZILLA_CONTROL))
 		options.flags |= OPT_MOZILLA;
-	if(GetPrivateProfileInt("Debug", "QiuckQuit", 0, options.IniFileName))
+	if(GetSettingInt("Debug", "QiuckQuit", DEFAULT_QUICK_QUIT))
 		options.flags |= OPT_QUICKQIUT;
-	if(GetPrivateProfileInt("Debug", "GlobalHook", 0, options.IniFileName))
+	if(GetSettingInt("Debug", "GlobalHook", DEFAULT_GLOBAL_HOOK))
 		options.flags |= OPT_GLOBALHOOK;
-	if(GetPrivateProfileInt("Extensions", "SignatureSkipSpaces", 0, options.IniFileName))
+	if(GetSettingInt("Extensions", "SignatureSkipSpaces", DEFAULT_SIGNATURE_SKIP_SPACES))
 		options.flags |= OPT_SIGNSKIPSPACES;
-	if(GetPrivateProfileInt("Debug", "KeepHookWhenNoWindows", 0, options.IniFileName))
+	if(GetSettingInt("Debug", "KeepHookWhenNoWindows", DEFAULT_KEEP_HOOK_WHEN_NO_WINDOWS))
 		options.flags |= OPT_KEEPHOOKNOWINDOWS;
 
-	options.toolbar = 3&GetPrivateProfileInt("options", "ShowToolbar", 0, options.IniFileName);
-	options.status = 3&GetPrivateProfileInt("options", "ShowStatusbar", 0, options.IniFileName);
+	options.toolbar = 3&GetSettingInt("options", "ShowToolbar", DEFAULT_SHOW_TOOLBAR);
+	options.status = 3&GetSettingInt("options", "ShowStatusbar", DEFAULT_SHOW_STATUSBAR);
 
-	options.toolbar |= (3&GetPrivateProfileInt("Debug", "ToolbarBPP", 2, options.IniFileName))<<2;
+	options.toolbar |= (3&GetSettingInt("Debug", "ToolbarBPP", DEFAULT_TOOLBAR_BPP))<<2;
 
-	options.highlight_all_matches = GetPrivateProfileInt("options", "HighlightAllMatches", 0, options.IniFileName);
+	options.highlight_all_matches = GetSettingInt("options", "HighlightAllMatches", DEFAULT_HIGHLIGHT_ALL_MATCHES);
 
 	options.dlcontrol = 0;
-	if(!GetPrivateProfileInt("options", "AllowScripting", 0, options.IniFileName))
+	if(!GetSettingInt("options", "AllowScripting", DEFAULT_ALLOW_SCRIPTING))
 			options.dlcontrol |= DLCTL_NO_SCRIPTS;
-	if(GetPrivateProfileInt("options", "ShowImages", 1, options.IniFileName))
+	if(GetSettingInt("options", "ShowImages", DEFAULT_SHOW_IMAGES))
 			options.dlcontrol |= DLCTL_DLIMAGES;
-	if(GetPrivateProfileInt("options", "ShowVideos", 1, options.IniFileName))
+	if(GetSettingInt("options", "ShowVideos", DEFAULT_SHOW_VIDEOS))
 			options.dlcontrol |= DLCTL_VIDEOS;
-	if(GetPrivateProfileInt("options", "PlaySounds", 1, options.IniFileName))
+	if(GetSettingInt("options", "PlaySounds", DEFAULT_PLAY_SOUNDS))
 			options.dlcontrol |= DLCTL_BGSOUNDS;
-	if(!GetPrivateProfileInt("options", "AllowJava", 0, options.IniFileName))
+	if(!GetSettingInt("options", "AllowJava", DEFAULT_ALLOW_JAVA))
 			options.dlcontrol |= DLCTL_NO_JAVA;
-	if(!GetPrivateProfileInt("options", "AllowActiveX", 0, options.IniFileName))
+	if(!GetSettingInt("options", "AllowActiveX", DEFAULT_ALLOW_ACTIVEX))
 			options.dlcontrol |= DLCTL_NO_DLACTIVEXCTLS | DLCTL_NO_RUNACTIVEXCTLS;
-	if(GetPrivateProfileInt("options", "ForceOffline", 1, options.IniFileName))
+	if(GetSettingInt("options", "ForceOffline", DEFAULT_FORCE_OFFLINE))
 			options.dlcontrol |= DLCTL_OFFLINE | DLCTL_FORCEOFFLINE | DLCTL_OFFLINEIFNOTCONNECTED;
-	if(GetPrivateProfileInt("options", "Silent", 1, options.IniFileName))
+	if(GetSettingInt("options", "Silent", DEFAULT_SILENT))
 			options.dlcontrol |= DLCTL_SILENT;
 	options.valid = true;
 }

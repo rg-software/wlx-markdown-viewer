@@ -8,6 +8,7 @@
 
 #include "browserhost.h"
 #include "functions.h"
+#include "settings_defaults.h"
 #include <boost/nowide/convert.hpp>
 
 CBrowserHost::CBrowserHost() :
@@ -632,7 +633,7 @@ void CBrowserHost::ProcessHotkey(UINT Msg, DWORD Key, DWORD Info)
 	CAtlString full_name = GetFullKeyName(Key);
 	if((full_name=="F3" || full_name=="Shift+F3") && IsSearchHighlightEnabled())
 		mWebBrowser->ExecWB(OLECMDID_CLEARSELECTION, OLECMDEXECOPT_DONTPROMPTUSER, NULL, NULL);
-	if((Msg==WM_KEYDOWN||Msg==WM_SYSKEYDOWN)&&GetPrivateProfileString("Hotkeys", (const char*)full_name, "", str_action, sizeof(str_action), options.IniFileName))
+	if((Msg==WM_KEYDOWN||Msg==WM_SYSKEYDOWN)&&GetSettingString("Hotkeys", (const char*)full_name, DEFAULT_HOTKEY_ACTION, str_action, sizeof(str_action)))
 	{
 		if(!strcmpi(str_action,"Back"))
 			mWebBrowser->GoBack();
@@ -721,7 +722,7 @@ void CBrowserHost::ProcessHotkey(UINT Msg, DWORD Key, DWORD Info)
 void CBrowserHost::UpdateTitle()
 {
 	char buf[1024];
-	if(mFocusType!=fctQuickView && GetPrivateProfileString("options", "ListerTitle", "",buf , sizeof(buf), options.IniFileName))
+	if(mFocusType!=fctQuickView && GetSettingString("options", "ListerTitle", DEFAULT_LISTER_TITLE, buf , sizeof(buf)))
 	{
 		CAtlStringW atlstr_text = buf;
 		BSTR title_wide=NULL;
@@ -972,9 +973,9 @@ HRESULT STDMETHODCALLTYPE CBrowserHost::Invoke(DISPID dispIdMember, REFIID riid,
 			{
 				char temp[MAX_PATH+3];
 				if(!wcsnicmp(pDispParams->rgvarg[5].bstrVal, L"mk:@msitstore:", 14))
-					GetPrivateProfileString("options", "NewWindowCHM", "", (char*)temp, sizeof(temp), options.IniFileName);
+					GetSettingString("options", "NewWindowCHM", DEFAULT_NEW_WINDOW_CHM, (char*)temp, sizeof(temp));
 				else
-					GetPrivateProfileString("options", "NewWindowHTML", "", (char*)temp, sizeof(temp), options.IniFileName);
+					GetSettingString("options", "NewWindowHTML", DEFAULT_NEW_WINDOW_HTML, (char*)temp, sizeof(temp));
 				if(temp[0]=='\0')
 					return S_OK;
 

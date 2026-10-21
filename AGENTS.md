@@ -23,14 +23,16 @@ Lister plugin (32/64-bit Windows) for Total Commander that renders HTML and Mark
 ## Tests
 
 - Hoedown rendering tests: `python Hoedown/test/runner.py` (requires `tidy` installed and on PATH). Compares rendered Markdown output against expected HTML.
-- No C++ unit-test suite and no linter; verification is a build of both platforms plus a manual load in Total Commander.
+- Configuration unit tests: `tests\run_tests.bat` (builds and runs `tests/ini_settings_test.cpp` for Win32 and x64). Checks the layered settings lookup (user ini -> shipped sample -> hardcoded default) and that `HTMLView/settings_defaults.h` still matches `Build/MarkdownView.ini`.
+- No linter; verification is a build of both platforms plus a manual load in Total Commander.
 
 ## Architecture
 
 - Total Commander WLX exports (`ListLoad`, `ListLoadNext`, `ListSearchText`/`W`, `ListPrint`, `ListCloseWindow`, `ListGetDetectString`-adjacent) live in `HTMLView/main.cpp`, exported via `HTMLView/htmlview.def`.
 - Markdown files are detected by extension (from `MarkdownView.ini` -> `[Extensions] MarkdownExtensions`); other supported types (HTML, CHM, signatures) are handed to the IE WebBrowser control directly.
 - Markdown rendering pipeline (`browser_show_file` in `HTMLView/main.cpp`): read file (with encoding detection via text-encoding-detect), run `hoedown_main` to convert to HTML, optionally run `smartypants`, inject the configured CSS (from `Build/css/`), and load the result into the WebBrowser control via a stream.
-- Plugin settings come from `MarkdownView.ini` (template shipped in `Build/MarkdownView.ini`): `[Extensions]`, `[Renderer]` (HoedownArgs, UseSmartypants, CustomCSS/CustomCSSDark), hotkeys, toolbar/status bar options. Parsed with `GetPrivateProfile*` and `CSmallStringList` (see `HTMLView/functions.*`).
+- Plugin settings come from `MarkdownView.ini` (template shipped in `Build/MarkdownView.ini`): `[Extensions]`, `[Renderer]` (HoedownArgs, UseSmartypants, CustomCSS/CustomCSSDark), hotkeys, toolbar/status bar options.
+- Settings are read through a layered lookup (`HTMLView/ini_settings.*`): the user's `MarkdownView.ini` wins, then the shipped `MarkdownView.ini.sample` from the same directory, then the hardcoded default from `HTMLView/settings_defaults.h` (which mirrors the active values of `Build/MarkdownView.ini`). Lists are parsed with `CSmallStringList` (`HTMLView/functions.*`).
 - Encoding detection: `TextEncodingDetect` plus boost::nowide for UTF-16 -> UTF-8 conversion.
 
 ## Conventions

@@ -9,6 +9,7 @@
 #include <sstream>
 #include "functions.h"
 #include "browserhost.h"
+#include "settings_defaults.h"
 #include "ListerPlugin.h"
 #include "resource.h"
 #include <ExDispID.h>
@@ -96,22 +97,22 @@ void InitProc()
 	}
 	
 	if(!markdown_extensions.valid())
-		markdown_extensions.load_from_ini(options.IniFileName, "Extensions", "MarkdownExtensions");
+		markdown_extensions.load_from_ini(options.IniFileName, "Extensions", "MarkdownExtensions", DEFAULT_MARKDOWN_EXTENSIONS);
 	if(!html_extensions.valid())
-		html_extensions.load_from_ini(options.IniFileName, "Extensions", "HTMLExtensions");
+		html_extensions.load_from_ini(options.IniFileName, "Extensions", "HTMLExtensions", DEFAULT_HTML_EXTENSIONS);
 	if(!chm_extensions.valid())
-		chm_extensions.load_from_ini(options.IniFileName, "Extensions", "CHMExtensions");
+		chm_extensions.load_from_ini(options.IniFileName, "Extensions", "CHMExtensions", DEFAULT_CHM_EXTENSIONS);
 	if(!def_signatures.valid())
-		def_signatures.load_sign_from_ini(options.IniFileName, "Extensions", "DefaultSignatures");
+		def_signatures.load_sign_from_ini(options.IniFileName, "Extensions", "DefaultSignatures", DEFAULT_SIGNATURES);
 	if(!typing_trans_hotkeys.valid())
-		typing_trans_hotkeys.load_from_ini(options.IniFileName, "Hotkeys", "TypingTranslationHotkeys");
+		typing_trans_hotkeys.load_from_ini(options.IniFileName, "Hotkeys", "TypingTranslationHotkeys", DEFAULT_TYPING_TRANSLATION_HOTKEYS);
 	if(!trans_hotkeys.valid())
-		trans_hotkeys.load_from_ini(options.IniFileName, "Hotkeys", "TranslationHotkeys");
+		trans_hotkeys.load_from_ini(options.IniFileName, "Hotkeys", "TranslationHotkeys", DEFAULT_TRANSLATION_HOTKEYS);
 	
-	GetPrivateProfileString("Renderer", "HoedownArgs", "", &hoedown_args[0], 512, options.IniFileName);
-	GetPrivateProfileString("Renderer", "UseSmartyPants", "", &smartypants_args[0], 512, options.IniFileName);
-	GetPrivateProfileString("Renderer", "CustomCSS", "", &html_template[0], 512, options.IniFileName);
-	GetPrivateProfileString("Renderer", "CustomCSSDark", "", &html_template_dark[0], 512, options.IniFileName);
+	GetSettingString("Renderer", "HoedownArgs", DEFAULT_HOEDOWN_ARGS, hoedown_args, sizeof(hoedown_args));
+	GetSettingString("Renderer", "UseSmartyPants", DEFAULT_USE_SMARTYPANTS, smartypants_args, sizeof(smartypants_args));
+	GetSettingString("Renderer", "CustomCSS", DEFAULT_CUSTOM_CSS, html_template, sizeof(html_template));
+	GetSettingString("Renderer", "CustomCSSDark", DEFAULT_CUSTOM_CSS_DARK, html_template_dark, sizeof(html_template_dark));
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

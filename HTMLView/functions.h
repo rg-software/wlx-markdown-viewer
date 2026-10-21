@@ -4,6 +4,7 @@
 #define _CONVERSION_DONT_USE_THREAD_LOCALE
 #include <windows.h>
 #include <atlstr.h>
+#include "ini_settings.h"
 
 #define MAIN_WINDOW_CLASS "IEViewMainWindowClass"
 #define TBB_BACK 0
@@ -48,8 +49,8 @@ public:
 	void set_size(int size);
 	void set_data(const unsigned char* buffer, int size);
 	bool valid();
-	void load_from_ini(const char* filename, const char* section, const char* key);
-	void load_sign_from_ini(const char* filename, const char* section, const char* key);
+	void load_from_ini(const char* filename, const char* section, const char* key, const char* hardcoded_default);
+	void load_sign_from_ini(const char* filename, const char* section, const char* key, const char* hardcoded_default);
 	bool find(const char* str);
 	bool check_signature(const char* filename, bool skip_spaces);
 };
@@ -73,6 +74,11 @@ void InitProc();
 HWND GetBrowserHostWnd(HWND child_hwnd);
 CAtlString GetFullKeyName(WORD key);
 CAtlString GetCHMIndex(char* FileName);
+
+// Layered configuration read (user ini -> shipped sample -> hardcoded default),
+// see ini_settings.h for the details. Returns the length of the resolved value.
+int GetSettingString(const char* section, const char* key, const char* hardcoded_default, char* buffer, int buffer_size);
+int GetSettingInt(const char* section, const char* key, int hardcoded_default);
 
 int Log(char* Section,char* Text);
 void LogTime(char* Text);
